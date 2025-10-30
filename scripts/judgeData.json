@@ -1,170 +1,170 @@
 [
-	{
-		"name": "judge1grag",
-		"role": "judge",
-		"email": "judge1grag@slts.cbe",
-		"event": "GROUP - Altar Decoration - Girls"
-	},
-	{
-		"name": "judge3grdg",
-		"event": "GROUP - Devotional Singing - Girls",
-		"role": "judge",
-		"email": "judge3grdg@slts.cbe"
-	},
-	{
-		"name": "judge4g3sg",
-		"event": "G3-Slokas - Girls",
-		"role": "judge",
-		"email": "judge4g3sg@slts.cbe"
-	},
-	{
-		"role": "judge",
-		"event": "G2-Vedam Chanting - Girls",
-		"name": "judge1g2vg",
-		"email": "judge1g2vg@slts.cbe"
-	},
-	{
-		"event": "G2-Elocution - English",
-		"email": "judge3g2ee@slts.cbe",
-		"role": "judge",
-		"name": "judge3g2ee"
-	},
-	{
-		"event": "G2-Vedam Chanting - Girls",
-		"name": "judge2g2vg",
-		"role": "judge",
-		"email": "judge2g2vg@slts.cbe"
-	},
-	{
-		"email": "judge4g2et@slts.cbe",
-		"event": "G2-Elocution - Tamizh",
-		"role": "judge",
-		"name": "judge4g2et"
-	},
-	{
-		"name": "judge2grag",
-		"email": "judge2grag@slts.cbe",
-		"role": "judge",
-		"event": "GROUP - Altar Decoration - Girls"
-	},
-	{
-		"event": "G3-Drawing",
-		"role": "judge",
-		"email": "judge2g3dr@slts.cbe",
-		"name": "judge2g3dr"
-	},
-	{
-		"email": "judge4g2ee@slts.cbe",
-		"name": "judge4g2ee",
-		"event": "G2-Elocution - English",
-		"role": "judge"
-	},
-	{
-		"name": "judge1g2ee",
-		"email": "judge1g2ee@slts.cbe",
-		"role": "judge",
-		"event": "G2-Elocution - English"
-	},
-	{
-		"event": "GROUP - Devotional Singing - Girls",
-		"role": "judge",
-		"name": "judge1grdg",
-		"email": "judge1grdg@slts.cbe"
-	},
-	{
-		"role": "judge",
-		"email": "judge1g3sg@slts.cbe",
-		"event": "G3-Slokas - Girls",
-		"name": "judge1g3sg"
-	},
-	{
-		"event": "G2-Elocution - Tamizh",
-		"email": "judge2g2et@slts.cbe",
-		"role": "judge",
-		"name": "judge2g2et"
-	},
-	{
-		"event": "GROUP - Altar Decoration - Girls",
-		"name": "judge3grag",
-		"email": "judge3grag@slts.cbe",
-		"role": "judge"
-	},
-	{
-		"name": "judge4g3dr",
-		"event": "G3-Drawing",
-		"role": "judge",
-		"email": "judge4g3dr@slts.cbe"
-	},
-	{
-		"role": "judge",
-		"name": "judge4grag",
-		"event": "GROUP - Altar Decoration - Girls",
-		"email": "judge4grag@slts.cbe"
-	},
-	{
-		"event": "G2-Elocution - Tamizh",
-		"name": "judge3g2et",
-		"role": "judge",
-		"email": "judge3g2et@slts.cbe"
-	},
-	{
-		"email": "judge2grdg@slts.cbe",
-		"event": "GROUP - Devotional Singing - Girls",
-		"role": "judge",
-		"name": "judge2grdg"
-	},
-	{
-		"email": "judge1g3dr@slts.cbe",
-		"name": "judge1g3dr",
-		"event": "G3-Drawing",
-		"role": "judge"
-	},
-	{
-		"email": "judge2g3sg@slts.cbe",
-		"role": "judge",
-		"event": "G3-Slokas - Girls",
-		"name": "judge2g3sg"
-	},
-	{
-		"email": "judge2g2ee@slts.cbe",
-		"event": "G2-Elocution - English",
-		"name": "judge2g2ee",
-		"role": "judge"
-	},
-	{
-		"event": "G2-Vedam Chanting - Girls",
-		"name": "judge3g2vg",
-		"role": "judge",
-		"email": "judge3g2vg@slts.cbe"
-	},
-	{
-		"name": "judge4g2vg",
-		"role": "judge",
-		"event": "G2-Vedam Chanting - Girls",
-		"email": "judge4g2vg@slts.cbe"
-	},
-	{
-		"email": "judge4grdg@slts.cbe",
-		"role": "judge",
-		"name": "judge4grdg",
-		"event": "GROUP - Devotional Singing - Girls"
-	},
-	{
-		"role": "judge",
-		"event": "G2-Elocution - Tamizh",
-		"email": "judge1g2et@slts.cbe",
-		"name": "judge1g2et"
-	},
-	{
-		"email": "judge3g3sg@slts.cbe",
-		"name": "judge3g3sg",
-		"role": "judge",
-		"event": "G3-Slokas - Girls"
-	},
-	{
-		"role": "judge",
-		"email": "judge3g3dr@slts.cbe",
-		"name": "judge3g3dr",
-		"event": "G3-Drawing"
-	}
+  {
+    "name": "judge1grag",
+    "role": "judge",
+    "email": "judge1grag@slts.cbe",
+    "event": "GROUP - Altar Decoration - Girls"
+  },
+  {
+    "name": "judge3grdg",
+    "event": "GROUP - Devotional Singing - Girls",
+    "role": "judge",
+    "email": "judge3grdg@slts.cbe"
+  },
+  {
+    "name": "judge4g3sg",
+    "event": "G3-Slokas - Girls",
+    "role": "judge",
+    "email": "judge4g3sg@slts.cbe"
+  },
+  {
+    "role": "judge",
+    "event": "G2-Vedam Chanting - Girls",
+    "name": "judge1g2vg",
+    "email": "judge1g2vg@slts.cbe"
+  },
+  {
+    "event": "G2-Elocution - English",
+    "email": "judge3g2ee@slts.cbe",
+    "role": "judge",
+    "name": "judge3g2ee"
+  },
+  {
+    "event": "G2-Vedam Chanting - Girls",
+    "name": "judge2g2vg",
+    "role": "judge",
+    "email": "judge2g2vg@slts.cbe"
+  },
+  {
+    "email": "judge4g2et@slts.cbe",
+    "event": "G2-Elocution - Tamizh",
+    "role": "judge",
+    "name": "judge4g2et"
+  },
+  {
+    "name": "judge2grag",
+    "email": "judge2grag@slts.cbe",
+    "role": "judge",
+    "event": "GROUP - Altar Decoration - Girls"
+  },
+  {
+    "event": "G3-Drawing",
+    "role": "judge",
+    "email": "judge2g3dr@slts.cbe",
+    "name": "judge2g3dr"
+  },
+  {
+    "email": "judge4g2ee@slts.cbe",
+    "name": "judge4g2ee",
+    "event": "G2-Elocution - English",
+    "role": "judge"
+  },
+  {
+    "name": "judge1g2ee",
+    "email": "judge1g2ee@slts.cbe",
+    "role": "judge",
+    "event": "G2-Elocution - English"
+  },
+  {
+    "event": "GROUP - Devotional Singing - Girls",
+    "role": "judge",
+    "name": "judge1grdg",
+    "email": "judge1grdg@slts.cbe"
+  },
+  {
+    "role": "judge",
+    "email": "judge1g3sg@slts.cbe",
+    "event": "G3-Slokas - Girls",
+    "name": "judge1g3sg"
+  },
+  {
+    "event": "G2-Elocution - Tamizh",
+    "email": "judge2g2et@slts.cbe",
+    "role": "judge",
+    "name": "judge2g2et"
+  },
+  {
+    "event": "GROUP - Altar Decoration - Girls",
+    "name": "judge3grag",
+    "email": "judge3grag@slts.cbe",
+    "role": "judge"
+  },
+  {
+    "name": "judge4g3dr",
+    "event": "G3-Drawing",
+    "role": "judge",
+    "email": "judge4g3dr@slts.cbe"
+  },
+  {
+    "role": "judge",
+    "name": "judge4grag",
+    "event": "GROUP - Altar Decoration - Girls",
+    "email": "judge4grag@slts.cbe"
+  },
+  {
+    "event": "G2-Elocution - Tamizh",
+    "name": "judge3g2et",
+    "role": "judge",
+    "email": "judge3g2et@slts.cbe"
+  },
+  {
+    "email": "judge2grdg@slts.cbe",
+    "event": "GROUP - Devotional Singing - Girls",
+    "role": "judge",
+    "name": "judge2grdg"
+  },
+  {
+    "email": "judge1g3dr@slts.cbe",
+    "name": "judge1g3dr",
+    "event": "G3-Drawing",
+    "role": "judge"
+  },
+  {
+    "email": "judge2g3sg@slts.cbe",
+    "role": "judge",
+    "event": "G3-Slokas - Girls",
+    "name": "judge2g3sg"
+  },
+  {
+    "email": "judge2g2ee@slts.cbe",
+    "event": "G2-Elocution - English",
+    "name": "judge2g2ee",
+    "role": "judge"
+  },
+  {
+    "event": "G2-Vedam Chanting - Girls",
+    "name": "judge3g2vg",
+    "role": "judge",
+    "email": "judge3g2vg@slts.cbe"
+  },
+  {
+    "name": "judge4g2vg",
+    "role": "judge",
+    "event": "G2-Vedam Chanting - Girls",
+    "email": "judge4g2vg@slts.cbe"
+  },
+  {
+    "email": "judge4grdg@slts.cbe",
+    "role": "judge",
+    "name": "judge4grdg",
+    "event": "GROUP - Devotional Singing - Girls"
+  },
+  {
+    "role": "judge",
+    "event": "G2-Elocution - Tamizh",
+    "email": "judge1g2et@slts.cbe",
+    "name": "judge1g2et"
+  },
+  {
+    "email": "judge3g3sg@slts.cbe",
+    "name": "judge3g3sg",
+    "role": "judge",
+    "event": "G3-Slokas - Girls"
+  },
+  {
+    "role": "judge",
+    "email": "judge3g3dr@slts.cbe",
+    "name": "judge3g3dr",
+    "event": "G3-Drawing"
+  }
 ]

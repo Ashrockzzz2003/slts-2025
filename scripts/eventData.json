@@ -1,126 +1,126 @@
 [
-	{
-		"evalCriteria": {
-			"Memory": 15,
-			"Bhaavam": 5,
-			"Intonation": 15,
-			"Pronunciation": 15
-		},
-		"name": "G2-Vedam Chanting - Girls",
-		"group": ["Group 2"],
-		"judgeEmailList": [
-			"judge1g2vg@slts.cbe",
-			"judge2g2vg@slts.cbe",
-			"judge3g2vg@slts.cbe",
-			"judge4g2vg@slts.cbe"
-		],
-		"jRefId": "g2vg",
-		"judgeIdList": []
-	},
-	{
-		"judgeIdList": [],
-		"evalCriteria": {
-			"Harmony": 10,
-			"Memory&Pronounciation": 10,
-			"Ragam": 10,
-			"Shruthi": 10,
-			"Bhaavam": 10,
-			"Taalam": 10
-		},
-		"judgeEmailList": [
-			"judge1grdg@slts.cbe",
-			"judge2grdg@slts.cbe",
-			"judge3grdg@slts.cbe",
-			"judge4grdg@slts.cbe"
-		],
-		"name": "GROUP - Devotional Singing - Girls",
-		"group": ["Group 1", "Group 2", "Group 3"],
-		"jRefId": "grdg"
-	},
-	{
-		"name": "GROUP - Altar Decoration - Girls",
-		"judgeEmailList": [
-			"judge1grag@slts.cbe",
-			"judge2grag@slts.cbe",
-			"judge3grag@slts.cbe",
-			"judge4grag@slts.cbe"
-		],
-		"evalCriteria": {
-			"Resource Management": 10,
-			"Teamwork": 10,
-			"Aesthetics": 10
-		},
-		"judgeIdList": [],
-		"jRefId": "grag",
-		"group": ["Group 2", "Group 3"]
-	},
-	{
-		"name": "G3-Slokas - Girls",
-		"group": ["Group 3"],
-		"jRefId": "g3sg",
-		"evalCriteria": {
-			"Memory": 10,
-			"Tune": 5,
-			"Bhavam": 5,
-			"Pronounciation": 10
-		},
-		"judgeIdList": [],
-		"judgeEmailList": [
-			"judge1g3sg@slts.cbe",
-			"judge2g3sg@slts.cbe",
-			"judge3g3sg@slts.cbe",
-			"judge4g3sg@slts.cbe"
-		]
-	},
-	{
-		"jRefId": "g3dr",
-		"group": ["Group 3"],
-		"name": "G3-Drawing",
-		"evalCriteria": {
-			"Colour-Coordination": 10,
-			"Theme": 10,
-			"Layout": 10
-		},
-		"judgeEmailList": [
-			"judge1g3dr@slts.cbe",
-			"judge2g3dr@slts.cbe",
-			"judge3g3dr@slts.cbe",
-			"judge4g3dr@slts.cbe"
-		],
-		"judgeIdList": []
-	},
-	{
-		"judgeEmailList": [
-			"judge1g2ee@slts.cbe",
-			"judge2g2ee@slts.cbe",
-			"judge3g2ee@slts.cbe",
-			"judge4g2ee@slts.cbe"
-		],
-		"group": ["Group 2"],
-		"evalCriteria": {
-			"Language": 10,
-			"Presentation": 10,
-			"Content": 10
-		},
-		"judgeIdList": [],
-		"name": "G2-Elocution - English",
-		"jRefId": "g2ee"
-	},
-	{
-		"judgeEmailList": [
-			"judge1g2et@slts.cbe",
-			"judge2g2et@slts.cbe",
-			"judge3g2et@slts.cbe",
-			"judge4g2et@slts.cbe"
-		],
-		"evalCriteria": {
-			"Language": 10,
-			"Content": 10,
-			"Presentation": 10
-		},
-		"judgeIdList": [],
-		"group": ["Group 2"],
-		"jRefId": "g2et",
-		"name": "G2-Elocution - Tamizh"
-	}
+  {
+    "evalCriteria": {
+      "Memory": 15,
+      "Bhaavam": 5,
+      "Intonation": 15,
+      "Pronunciation": 15
+    },
+    "name": "G2-Vedam Chanting - Girls",
+    "group": ["Group 2"],
+    "judgeEmailList": [
+      "judge1g2vg@slts.cbe",
+      "judge2g2vg@slts.cbe",
+      "judge3g2vg@slts.cbe",
+      "judge4g2vg@slts.cbe"
+    ],
+    "jRefId": "g2vg",
+    "judgeIdList": []
+  },
+  {
+    "judgeIdList": [],
+    "evalCriteria": {
+      "Harmony": 10,
+      "Memory&Pronounciation": 10,
+      "Ragam": 10,
+      "Shruthi": 10,
+      "Bhaavam": 10,
+      "Taalam": 10
+    },
+    "judgeEmailList": [
+      "judge1grdg@slts.cbe",
+      "judge2grdg@slts.cbe",
+      "judge3grdg@slts.cbe",
+      "judge4grdg@slts.cbe"
+    ],
+    "name": "GROUP - Devotional Singing - Girls",
+    "group": ["Group 1", "Group 2", "Group 3"],
+    "jRefId": "grdg"
+  },
+  {
+    "name": "GROUP - Altar Decoration - Girls",
+    "judgeEmailList": [
+      "judge1grag@slts.cbe",
+      "judge2grag@slts.cbe",
+      "judge3grag@slts.cbe",
+      "judge4grag@slts.cbe"
+    ],
+    "evalCriteria": {
+      "Resource Management": 10,
+      "Teamwork": 10,
+      "Aesthetics": 10
+    },
+    "judgeIdList": [],
+    "jRefId": "grag",
+    "group": ["Group 2", "Group 3"]
+  },
+  {
+    "name": "G3-Slokas - Girls",
+    "group": ["Group 3"],
+    "jRefId": "g3sg",
+    "evalCriteria": {
+      "Memory": 10,
+      "Tune": 5,
+      "Bhavam": 5,
+      "Pronounciation": 10
+    },
+    "judgeIdList": [],
+    "judgeEmailList": [
+      "judge1g3sg@slts.cbe",
+      "judge2g3sg@slts.cbe",
+      "judge3g3sg@slts.cbe",
+      "judge4g3sg@slts.cbe"
+    ]
+  },
+  {
+    "jRefId": "g3dr",
+    "group": ["Group 3"],
+    "name": "G3-Drawing",
+    "evalCriteria": {
+      "Colour-Coordination": 10,
+      "Theme": 10,
+      "Layout": 10
+    },
+    "judgeEmailList": [
+      "judge1g3dr@slts.cbe",
+      "judge2g3dr@slts.cbe",
+      "judge3g3dr@slts.cbe",
+      "judge4g3dr@slts.cbe"
+    ],
+    "judgeIdList": []
+  },
+  {
+    "judgeEmailList": [
+      "judge1g2ee@slts.cbe",
+      "judge2g2ee@slts.cbe",
+      "judge3g2ee@slts.cbe",
+      "judge4g2ee@slts.cbe"
+    ],
+    "group": ["Group 2"],
+    "evalCriteria": {
+      "Language": 10,
+      "Presentation": 10,
+      "Content": 10
+    },
+    "judgeIdList": [],
+    "name": "G2-Elocution - English",
+    "jRefId": "g2ee"
+  },
+  {
+    "judgeEmailList": [
+      "judge1g2et@slts.cbe",
+      "judge2g2et@slts.cbe",
+      "judge3g2et@slts.cbe",
+      "judge4g2et@slts.cbe"
+    ],
+    "evalCriteria": {
+      "Language": 10,
+      "Content": 10,
+      "Presentation": 10
+    },
+    "judgeIdList": [],
+    "group": ["Group 2"],
+    "jRefId": "g2et",
+    "name": "G2-Elocution - Tamizh"
+  }
 ]
