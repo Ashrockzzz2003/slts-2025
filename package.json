@@ -1,39 +1,39 @@
 {
-	"name": "slts-2024",
-	"version": "1.0.0",
-	"private": true,
-	"scripts": {
-		"prepare": "husky",
-		"dev": "next dev --turbopack",
-		"build": "next build --turbopack",
-		"start": "next start",
-		"lint": "next lint",
-		"firebase:init": "node scripts/initFirestore.js",
-		"format": "biome format --write --files-ignore-unknown=true",
-		"max-lint": "biome check --write --files-ignore-unknown=true --max-diagnostics=1000"
-	},
-	"lint-staged": {
-		"*.{js,jsx,ts,tsx,css,md,json}": [
-			"biome check --write --files-ignore-unknown=true"
-		]
-	},
-	"dependencies": {
-		"@headlessui/react": "^2.2.4",
-		"@tailwindcss/postcss": "^4.1.11",
-		"firebase": "^11.10.0",
-		"firebase-admin": "^13.4.0",
-		"next": "^15.3.5",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0",
-		"react-secure-storage": "^1.3.2"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.0.6",
-		"eslint": "^9.30.1",
-		"eslint-config-next": "^15.3.5",
-		"husky": "^9.1.7",
-		"lint-staged": "^16.1.2",
-		"postcss": "^8.5.6",
-		"tailwindcss": "^4.1.11"
-	}
+  "name": "slts-2024",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "next lint",
+    "firebase:init": "node scripts/initFirestore.js",
+    "format": "biome format --write --files-ignore-unknown=true",
+    "max-lint": "biome check --write --files-ignore-unknown=true --max-diagnostics=1000"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,md,json}": [
+      "biome check --write --files-ignore-unknown=true"
+    ]
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.4",
+    "@tailwindcss/postcss": "^4.1.11",
+    "firebase": "^11.10.0",
+    "firebase-admin": "^13.4.0",
+    "next": "^15.3.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-secure-storage": "^1.3.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.6",
+    "eslint": "^9.30.1",
+    "eslint-config-next": "^15.3.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11"
+  }
 }
