@@ -21,16 +21,16 @@ export default function Home() {
     const user = secureLocalStorage.getItem('user');
     if (user) {
       const data = JSON.parse(user);
-      if (data.role == 'admin') {
+      if (data.role === 'admin') {
         router.push('/admin');
-      } else if (data.role == 'judge') {
+      } else if (data.role === 'judge') {
         data.event.includes('GROUP')
           ? router.push('/judge/group')
           : router.push('/judge/individual');
       } else if (
         Object.keys(reverseDistrictCode).indexOf(
           data.role.toString().toUpperCase(),
-        ) != -1
+        ) !== -1
       ) {
         router.push('/district');
       }
@@ -49,10 +49,10 @@ export default function Home() {
     signInWithEmailAndPassword(auth, email, password)
       .then((_) => {
         getUserData().then((data) => {
-          if (data.role == 'admin') {
+          if (data.role === 'admin') {
             secureLocalStorage.setItem('user', JSON.stringify(data));
             router.push('/admin');
-          } else if (data.role == 'judge') {
+          } else if (data.role === 'judge') {
             secureLocalStorage.setItem('user', JSON.stringify(data));
             data.event.includes('GROUP')
               ? router.push('/judge/group')
@@ -60,7 +60,7 @@ export default function Home() {
           } else if (
             Object.keys(reverseDistrictCode).indexOf(
               data.role.toString().toUpperCase(),
-            ) != -1
+            ) !== -1
           ) {
             secureLocalStorage.setItem('user', JSON.stringify(data));
             router.push('/district');
@@ -111,12 +111,13 @@ export default function Home() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <span
+              <button
+                type="button"
                 className="absolute inset-y-0 right-4 flex items-center cursor-pointer text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? '🫣' : '👁'}
-              </span>
+              </button>
             </div>
             <button
               type="submit"

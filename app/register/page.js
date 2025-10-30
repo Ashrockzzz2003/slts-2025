@@ -48,10 +48,11 @@ const RegisterPage = () => {
         <div className="flex overflow-x-auto whitespace-nowrap justify-between border-b border-gray-300 pb-3">
           {steps.map((s) => (
             <button
+              type="button"
               key={s.id}
               onClick={() => setStep(s.id)}
               disabled={!completedSteps.includes(s.id)}
-              className={`${step === s.id ? 'rounded-2xl text-xl px-4 py-2 font-bold transition-all bg-gray-500 text-white font-bold' : 'text-xl px-4 py-2 transition-all text-black'}${!completedSteps.includes(s.id) ? 'opacity-50 cursor-not-allowed text-gray-500' : ''}`}
+              className={`${step === s.id ? 'rounded-2xl text-xl px-4 py-2 transition-all bg-gray-500 text-white font-bold' : 'text-xl px-4 py-2 transition-all text-black'}${!completedSteps.includes(s.id) ? 'opacity-50 cursor-not-allowed text-gray-500' : ''}`}
             >
               {s.name}
             </button>

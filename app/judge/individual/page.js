@@ -2,7 +2,7 @@
 
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 import {
   getJudgeEventData,
@@ -39,6 +39,10 @@ export default function JudgePage() {
   const [groupNumber, setGroupNumber] = useState('');
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
+
+  // ID for certain components
+  const commentInputId = useId();
+  const evalCriteriaInputId = useId();
 
   const handleInputChange = (e, field) => {
     switch (field) {
@@ -168,7 +172,7 @@ export default function JudgePage() {
       setFilteredParticipants(
         participants.filter((participant) => {
           return (
-            searchQuery == '' ||
+            searchQuery === '' ||
             participant.studentId
               .toLowerCase()
               .includes(searchQuery.toLowerCase())
@@ -189,7 +193,7 @@ export default function JudgePage() {
     } else {
       setUser(user);
       getJudgeEventData(user.event).then((_data) => {
-        if (_data == null || _data.length != 2) {
+        if (_data == null || _data.length !== 2) {
           router.push('/');
         }
 
@@ -248,6 +252,7 @@ export default function JudgePage() {
           </div>
           <div>
             <button
+              type="button"
               className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
               onClick={() => {
                 auth.signOut();
@@ -267,6 +272,7 @@ export default function JudgePage() {
             <div className="flex flex-row justify-between">
               <h1 className="text-2xl font-bold">{eventMetadata.name}</h1>
               <button
+                type="button"
                 className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl"
                 onClick={() => {
                   //    secureLocalStorage.setItem("event", JSON.stringify(eventMetadata));
@@ -284,9 +290,9 @@ export default function JudgePage() {
             </div>
             <p className="text-md">{participants.length} Participants</p>
             <div className="flex flex-row flex-wrap gap-1 mt-1">
-              {eventMetadata.group.map((group, index) => (
+              {eventMetadata.group.map((group, _) => (
                 <p
-                  key={index}
+                  key={group}
                   className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit"
                 >
                   {group}
@@ -305,8 +311,8 @@ export default function JudgePage() {
               </thead>
               <tbody>
                 {Object.entries(eventMetadata.evalCriteria).map(
-                  ([key, value], index) => (
-                    <tr key={index}>
+                  ([key, value], _) => (
+                    <tr key={`${key}-${value}`}>
                       <td className="border px-4 py-2">{key}</td>
                       <td className="border px-4 py-2">{value}</td>
                     </tr>
@@ -345,14 +351,13 @@ export default function JudgePage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 mt-4">
-              {filteredParticipants.map((participant, index) => (
+              {filteredParticipants.map((participant, _) => (
                 <div
-                  key={index}
+                  key={participant}
                   className="rounded-2xl p-2 bg-gray-100 border"
                 >
                   <div className="flex flex-row justify-between">
-                    {participant.substitute &&
-                    participant.substitute[eventMetadata.name] ? (
+                    {participant.substitute?.[eventMetadata.name] ? (
                       <div>
                         <p className="text-xs font-semibold text-[#32350b] rounded-2xl w-fit">
                           Substituted Student - Original{' '}
@@ -409,13 +414,12 @@ export default function JudgePage() {
                     )}
 
                     <div>
-                      {participant.score &&
-                      participant.score[eventMetadata.name] &&
+                      {participant.score?.[eventMetadata.name] &&
                       participant.score[eventMetadata.name][user.id] ? (
                         <div className="mt-2 flex flex-col">
-                          {participant.substitute &&
-                          participant.substitute[eventMetadata.name] ? (
+                          {participant.substitute?.[eventMetadata.name] ? (
                             <button
+                              type="button"
                               className="bg-[#ffcccc] text-[#660000] font-semibold px-4 py-1 rounded-xl mt-2"
                               onClick={() => {
                                 setIsLoading(true);
@@ -445,6 +449,7 @@ export default function JudgePage() {
                             </button>
                           ) : (
                             <button
+                              type="button"
                               className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
                               onClick={() => {
                                 setIsOpen(true);
@@ -455,6 +460,7 @@ export default function JudgePage() {
                             </button>
                           )}
                           <button
+                            type="button"
                             className="bg-[#ffcece] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2"
                             onClick={() => {
                               const _scoreMode = {};
@@ -482,11 +488,11 @@ export default function JudgePage() {
                             Edit Score
                           </button>
                         </div>
-                      ) : scoreMode[participant.studentId] == false ? (
+                      ) : scoreMode[participant.studentId] === false ? (
                         <div className="flex flex-col justify-between">
-                          {participant.substitute &&
-                          participant.substitute[eventMetadata.name] ? (
+                          {participant.substitute?.[eventMetadata.name] ? (
                             <button
+                              type="button"
                               className="bg-[#ffcccc] text-[#660000] font-semibold px-4 py-1 rounded-xl mt-2"
                               onClick={() => {
                                 setIsLoading(true);
@@ -516,6 +522,7 @@ export default function JudgePage() {
                             </button>
                           ) : (
                             <button
+                              type="button"
                               className="bg-[#cceeff] text-[#003366] font-semibold px-4 py-1 rounded-xl mt-2"
                               onClick={() => {
                                 setIsOpen(true);
@@ -526,6 +533,7 @@ export default function JudgePage() {
                             </button>
                           )}
                           <button
+                            type="button"
                             className="bg-[#ffd8a1] text-[#35250b] font-semibold px-4 py-1 rounded-xl mt-2"
                             onClick={() => {
                               const _scoreMode = {};
@@ -560,11 +568,17 @@ export default function JudgePage() {
                       <div className="flex flex-col gap-2 justify-center items-stretch align-middle">
                         {scoreBuffer.map(([key, val], index) => (
                           <div
-                            key={index}
+                            key={`${key}-${val}`}
                             className="flex flex-row justify-between items-center"
                           >
-                            <label className="text-sm">{key}</label>
+                            <label
+                              className="text-sm"
+                              htmlFor={evalCriteriaInputId}
+                            >
+                              {key}
+                            </label>
                             <input
+                              id={evalCriteriaInputId}
                               type="number"
                               className="border p-2 rounded-lg text-md"
                               max={eventMetadata.evalCriteria[key]}
@@ -591,12 +605,17 @@ export default function JudgePage() {
 
                         <hr className="border-dashed mt-2" />
                         <div className="flex flex-row justify-between align-middle">
-                          <label className="text-sm">Total</label>
+                          <label
+                            className="text-sm"
+                            htmlFor="total"
+                          >
+                            Total
+                          </label>
                           <p className="text-md font-semibold">
                             {scoreBuffer.reduce(
                               (a, b) =>
-                                (a == '' ? 0 : a) +
-                                parseInt(b[1] == '' ? 0 : b[1]),
+                                (a === '' ? 0 : a) +
+                                parseInt(b[1] === '' ? 0 : b[1], 10),
                               0,
                             )}
                           </p>
@@ -604,8 +623,14 @@ export default function JudgePage() {
 
                         <hr className="border-dashed" />
                         <div className="flex flex-col gap-2">
-                          <label className="text-sm">Comments (Optional)</label>
+                          <label
+                            className="text-sm"
+                            htmlFor={commentInputId}
+                          >
+                            Comments (Optional)
+                          </label>
                           <textarea
+                            id={commentInputId}
                             className="border p-2 rounded-lg"
                             value={commentBuffer}
                             onChange={(e) => setCommentBuffer(e.target.value)}
@@ -614,6 +639,7 @@ export default function JudgePage() {
 
                         <div className="flex flex-row justify-between gap-1">
                           <button
+                            type="button"
                             className="bg-[#ffe0e0] text-[#350b0b] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
                             disabled={isSaving}
                             onClick={() => {
@@ -629,6 +655,7 @@ export default function JudgePage() {
                             Cancel
                           </button>
                           <button
+                            type="button"
                             className="bg-[#c2fca2] text-[#0b350d] font-semibold px-4 py-1 rounded-xl mt-2 w-full disabled:opacity-50"
                             disabled={isSaving}
                             onClick={() => {
@@ -637,7 +664,7 @@ export default function JudgePage() {
                               // Check if the marks are within the range.
                               for (let i = 0; i < scoreBuffer.length; i++) {
                                 // Check if marks are present.
-                                if (scoreBuffer[i][1] == '') {
+                                if (scoreBuffer[i][1] === '') {
                                   alert(
                                     `Please provide marks for ${scoreBuffer[i][0]}.`,
                                   );
@@ -645,7 +672,7 @@ export default function JudgePage() {
                                   return;
                                 }
 
-                                if (isNaN(scoreBuffer[i][1])) {
+                                if (Number.isNaN(scoreBuffer[i][1])) {
                                   alert(
                                     `Marks for ${scoreBuffer[i][0]} should be a number.`,
                                   );
@@ -686,7 +713,7 @@ export default function JudgePage() {
                                     const _participants = [...participants];
                                     const i = _participants.findIndex(
                                       (p) =>
-                                        p.studentId == participant.studentId,
+                                        p.studentId === participant.studentId,
                                     );
                                     _participants[i].score =
                                       _participants[i].score ?? {};
@@ -731,35 +758,49 @@ export default function JudgePage() {
                         </div>
                       </div>
                     </>
-                  ) : participant.score &&
-                    participant.score[eventMetadata.name] &&
+                  ) : participant.score?.[eventMetadata.name] &&
                     participant.score[eventMetadata.name][user.id] ? (
                     <div className="flex flex-col gap-2 mt-4">
                       <hr />
                       <h2 className="text-lg font-bold">Score</h2>
                       {Object.entries(
                         participant.score[eventMetadata.name][user.id],
-                      ).map(([key, val], index) => (
+                      ).map(([key, val], _) => (
                         <div
-                          key={index}
+                          key={`${key}-${val}`}
                           className="flex flex-row justify-between items-center"
                         >
-                          <label className="text-sm">{key}</label>
+                          <label
+                            className="text-sm"
+                            htmlFor="filteredParticipants"
+                          >
+                            {key}
+                          </label>
                           <p className="text-md font-semibold">{val}</p>
                         </div>
                       ))}
                       <hr className="border-dashed" />
                       <div className="flex flex-row justify-between items-center">
-                        <label className="text-sm">Total</label>
+                        <label
+                          className="text-sm"
+                          htmlFor="total"
+                        >
+                          Total
+                        </label>
                         <p className="text-md font-semibold">
                           {Object.values(
                             participant.score[eventMetadata.name][user.id],
-                          ).reduce((a, b) => a + parseInt(b), 0)}
+                          ).reduce((a, b) => a + parseInt(b, 10), 0)}
                         </p>
                       </div>
                       <hr className="border-dashed" />
                       <div className="flex flex-col gap-2">
-                        <label className="text-sm font-bold">Comments</label>
+                        <label
+                          className="text-sm font-bold"
+                          htmlFor="comments"
+                        >
+                          Comments
+                        </label>
                         <p className="text-md">
                           {participant.comment[eventMetadata.name][user.id] ??
                             '-'}
@@ -786,6 +827,7 @@ export default function JudgePage() {
                 Reason why student is not participating in the event
               </DialogTitle>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
                 className="bg-gray-200 p-1 rounded-full"
               >
@@ -796,6 +838,7 @@ export default function JudgePage() {
                   viewBox="0 0 24 24"
                   stroke="black"
                 >
+                  <title>SVG Icon</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -815,12 +858,14 @@ export default function JudgePage() {
               <p className="font-semibold">Add Substitute</p>
               <div className="flex flex-row justify-between">
                 <button
+                  type="button"
                   className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
                   onClick={() => setIsNewSelected(true)}
                 >
                   New
                 </button>
                 <button
+                  type="button"
                   className={`font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50 ${!isNewSelected ? 'bg-black text-white' : 'border border-black'}`}
                   onClick={() => setIsNewSelected(false)}
                 >
@@ -884,6 +929,7 @@ export default function JudgePage() {
 
             <div className="flex flex-row justify-between mt-2">
               <button
+                type="button"
                 className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
                 disabled={isLoading}
                 onClick={() => {
@@ -893,6 +939,7 @@ export default function JudgePage() {
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleSubmitSubstitution}
                 disabled={isLoading}
                 className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"

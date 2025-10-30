@@ -1,14 +1,15 @@
-import { cert, initializeApp } from 'firebase-admin/app';
+import { readFileSync } from 'node:fs';
+// import { cert, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { readFileSync } from 'fs';
 
-const serviceAccount = JSON.parse(
-  readFileSync('serviceAccountKey.json', 'utf-8'),
-);
-const admin = initializeApp({
-  credential: cert(serviceAccount),
-});
+// const serviceAccount = JSON.parse(
+//   readFileSync('serviceAccountKey.json', 'utf-8'),
+// );
+
+// const admin = initializeApp({
+//   credential: cert(serviceAccount),
+// });
 
 const auth = getAuth();
 const db = getFirestore();
@@ -65,7 +66,7 @@ const initEventData = async () => {
   const eventData = JSON.parse(readFileSync('scripts/eventData.json', 'utf-8'));
 
   for (const event of eventData) {
-    event['judgeIdList'] = event.judgeEmailList.map(
+    event.judgeIdList = event.judgeEmailList.map(
       (email) => judgeEmailToId[email],
     );
     await db.collection('eventData').doc(event.name).set(event);

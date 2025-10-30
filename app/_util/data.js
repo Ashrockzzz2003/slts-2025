@@ -4,7 +4,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  or,
   query,
   Timestamp,
   updateDoc,
@@ -40,7 +39,7 @@ export const getRegistrationData = async () => {
 
   data.forEach((row) => {
     for (const key in row) {
-      if (typeof row[key] === 'number' && isNaN(row[key])) {
+      if (typeof row[key] === 'number' && Number.isNaN(row[key])) {
         row[key] = null;
       }
     }
@@ -72,19 +71,19 @@ export const getRegistrationData = async () => {
     });
     groupNameSet.add(row.studentGroup);
 
-    if (row.modeOfTravel != '' && row.modeOfTravel != null) {
+    if (row.modeOfTravel !== '' && row.modeOfTravel != null) {
       modeOfTravelSet.add(row.modeOfTravel);
     }
 
-    if (row.modeOfTravelForDrop != '' && row.modeOfTravelForDrop != null) {
+    if (row.modeOfTravelForDrop !== '' && row.modeOfTravelForDrop != null) {
       modeOfTravelForDropSet.add(row.modeOfTravelForDrop);
     }
 
-    if (row.checkInDate != '' && row.checkInDate != null) {
+    if (row.checkInDate !== '' && row.checkInDate != null) {
       checkInDateSet.add(row.checkInDate);
     }
 
-    if (row.checkOutDate != '' && row.checkOutDate != null) {
+    if (row.checkOutDate !== '' && row.checkOutDate != null) {
       checkOutDateSet.add(row.checkOutDate);
     }
   });
@@ -125,7 +124,7 @@ export const getDistrictData = async (district) => {
 
   data.forEach((row) => {
     for (const key in row) {
-      if (typeof row[key] === 'number' && isNaN(row[key])) {
+      if (typeof row[key] === 'number' && Number.isNaN(row[key])) {
         row[key] = null;
       }
     }
@@ -147,19 +146,19 @@ export const getDistrictData = async (district) => {
     });
     groupNameSet.add(row.studentGroup);
 
-    if (row.modeOfTravel != '' && row.modeOfTravel != null) {
+    if (row.modeOfTravel !== '' && row.modeOfTravel != null) {
       modeOfTravelSet.add(row.modeOfTravel);
     }
 
-    if (row.modeOfTravelForDrop != '' && row.modeOfTravelForDrop != null) {
+    if (row.modeOfTravelForDrop !== '' && row.modeOfTravelForDrop != null) {
       modeOfTravelForDropSet.add(row.modeOfTravelForDrop);
     }
 
-    if (row.checkInDate != '' && row.checkInDate != null) {
+    if (row.checkInDate !== '' && row.checkInDate != null) {
       checkInDateSet.add(row.checkInDate);
     }
 
-    if (row.checkOutDate != '' && row.checkOutDate != null) {
+    if (row.checkOutDate !== '' && row.checkOutDate != null) {
       checkOutDateSet.add(row.checkOutDate);
     }
   });
@@ -183,7 +182,7 @@ export const getDistrictData = async (district) => {
   ];
 };
 
-export const getEventData = async (eventName) => {
+export const getEventData = async (_eventName) => {
   // if (!auth.currentUser) {
   //     return null;
   // }
@@ -245,7 +244,7 @@ export const getJudgeGroupEventData = async (eventName) => {
 
   participants.forEach((row) => {
     for (const key in row) {
-      if (typeof row[key] === 'number' && isNaN(row[key])) {
+      if (typeof row[key] === 'number' && Number.isNaN(row[key])) {
         row[key] = null;
       }
     }
@@ -283,7 +282,7 @@ export const getJudgeEventData = async (eventName) => {
 
   participants.forEach((row) => {
     for (const key in row) {
-      if (typeof row[key] === 'number' && isNaN(row[key])) {
+      if (typeof row[key] === 'number' && Number.isNaN(row[key])) {
         row[key] = null;
       }
     }
@@ -316,7 +315,8 @@ export const markScore = async (
 
   await updateDoc(doc(db, 'regData', studentId), {
     [`score.${eventName}.${judgeId}`]: score,
-    [`comment.${eventName}.${judgeId}`]: comment == '' ? '-' : (comment ?? '-'),
+    [`comment.${eventName}.${judgeId}`]:
+      comment === '' ? '-' : (comment ?? '-'),
   });
   return true;
 };
@@ -338,7 +338,7 @@ export const markGroupScore = async (
     await updateDoc(doc(db, 'regData', studentId), {
       [`score.${eventName}.${judgeId}`]: score,
       [`comment.${eventName}.${judgeId}`]:
-        comment == '' ? '-' : (comment ?? '-'),
+        comment === '' ? '-' : (comment ?? '-'),
     });
 
     // console.log(`Updated student: ${studentId}`);
@@ -394,22 +394,22 @@ export const substituteEvent = async (
     }
     const oldStudentData = oldStudentDoc.data();
 
-    if (oldStudentData.registeredEvents.indexOf(eventName) == -1) {
+    if (oldStudentData.registeredEvents.indexOf(eventName) === -1) {
       return 'Old Student is not registered for this event';
     }
 
-    if (newStudentId != '') {
+    if (newStudentId !== '') {
       const newStudentDoc = await getDoc(doc(db, 'regData', newStudentId));
       if (!newStudentDoc.exists()) {
         return 'New Student not found';
       }
       const newStudentData = newStudentDoc.data();
 
-      if (newStudentData.registeredEvents.indexOf(eventName) != -1) {
+      if (newStudentData.registeredEvents.indexOf(eventName) !== -1) {
         return 'New Student is already registered for this event';
       }
 
-      if (newStudentData.district != oldStudentData.district) {
+      if (newStudentData.district !== oldStudentData.district) {
         return 'District of Old and New Student should be same';
       }
 
@@ -527,13 +527,13 @@ export const getLiveData = async () => {
     }
   });
 
-  if (data.length == 0) {
+  if (data.length === 0) {
     return [[], [], [], [], [], [], [], []];
   }
 
   data.forEach((row) => {
     for (const key in row) {
-      if (typeof row[key] === 'number' && isNaN(row[key])) {
+      if (typeof row[key] === 'number' && Number.isNaN(row[key])) {
         row[key] = null;
       }
     }
@@ -565,19 +565,19 @@ export const getLiveData = async () => {
     });
     groupNameSet.add(row.studentGroup);
 
-    if (row.modeOfTravel != '' && row.modeOfTravel != null) {
+    if (row.modeOfTravel !== '' && row.modeOfTravel != null) {
       modeOfTravelSet.add(row.modeOfTravel);
     }
 
-    if (row.modeOfTravelForDrop != '' && row.modeOfTravelForDrop != null) {
+    if (row.modeOfTravelForDrop !== '' && row.modeOfTravelForDrop != null) {
       modeOfTravelForDropSet.add(row.modeOfTravelForDrop);
     }
 
-    if (row.checkInDate != '' && row.checkInDate != null) {
+    if (row.checkInDate !== '' && row.checkInDate != null) {
       checkInDateSet.add(row.checkInDate);
     }
 
-    if (row.checkOutDate != '' && row.checkOutDate != null) {
+    if (row.checkOutDate !== '' && row.checkOutDate != null) {
       checkOutDateSet.add(row.checkOutDate);
     }
   });

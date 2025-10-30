@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 import { getEventData, updateCrieria } from '@/app/_util/data';
 import { auth } from '@/app/_util/initApp';
@@ -28,6 +28,10 @@ export default function ManageEvents() {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  // Ids
+  const groupSelectId = useId();
+  const searchInputId = useId();
+
   useEffect(() => {
     if (!secureLocalStorage.getItem('user')) {
       router.push('/');
@@ -36,7 +40,7 @@ export default function ManageEvents() {
     const user = JSON.parse(secureLocalStorage.getItem('user'));
     setUser(user);
     getEventData().then((_data) => {
-      if (_data == null || _data.length != 2) {
+      if (_data == null || _data.length !== 2) {
         router.push('/');
       }
 
@@ -53,8 +57,8 @@ export default function ManageEvents() {
       setFilteredData(
         data.filter((row) => {
           return (
-            (filterGroup == '' || row.group.includes(filterGroup)) &&
-            (searchQuery == '' ||
+            (filterGroup === '' || row.group.includes(filterGroup)) &&
+            (searchQuery === '' ||
               row.name.toLowerCase().includes(searchQuery.toLowerCase()))
           );
         }),
@@ -72,12 +76,14 @@ export default function ManageEvents() {
           </div>
           <div className="flex flex-row">
             <button
+              type="button"
               className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
               onClick={() => router.push('/admin')}
             >
               Dashboard
             </button>
             <button
+              type="button"
               className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
               onClick={() => {
                 auth.signOut();
@@ -95,7 +101,7 @@ export default function ManageEvents() {
             <div className="flex flex-col gap-4">
               <div>
                 <input
-                  id="search"
+                  id={searchInputId}
                   className="border p-2 rounded-2xl w-full"
                   placeholder="Search by event name"
                   value={searchQuery}
@@ -107,15 +113,15 @@ export default function ManageEvents() {
                 <div className="flex flex-col gap-2">
                   <label htmlFor="group">Group</label>
                   <select
-                    id="group"
+                    id={groupSelectId}
                     className="border p-2 rounded-2xl"
                     value={filterGroup}
                     onChange={(e) => setFilterGroup(e.target.value)}
                   >
                     <option value="">All</option>
-                    {groups.map((group, index) => (
+                    {groups.map((group, _) => (
                       <option
-                        key={index}
+                        key={group}
                         value={group}
                       >
                         {group}
@@ -139,9 +145,9 @@ export default function ManageEvents() {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((event, index) => (
+              {filteredData.map((event, _) => (
                 <tr
-                  key={index}
+                  key={event.name}
                   className="bg-white hover:bg-blue-50 text-bold transition duration-200"
                 >
                   <td className="border px-4 py-2 max-w-[240px]">
@@ -149,9 +155,9 @@ export default function ManageEvents() {
                       <p className="font-bold">{event.name}</p>
                     </div>
                     <div className="flex flex-row flex-wrap gap-1">
-                      {event.group.map((group, index) => (
+                      {event.group.map((group, _) => (
                         <p
-                          key={index}
+                          key={group}
                           className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit"
                         >
                           {group}
@@ -161,10 +167,10 @@ export default function ManageEvents() {
                   </td>
                   <td className="border px-4 py-2">
                     <div className="flex flex-col flex-wrap gap-1 w-fit">
-                      {event.judgeEmailList.map((judge, index) => (
+                      {event.judgeEmailList.map((judge, _) => (
                         <p
                           className="bg-[#f6e7ff] text-[#220b35] px-2 py-1 rounded-2xl font-semibold"
-                          key={index}
+                          key={judge}
                         >
                           {judge}
                         </p>
@@ -180,8 +186,8 @@ export default function ManageEvents() {
                         </tr>
                       </thead>
                       <tbody>
-                        {Object.keys(event.evalCriteria).map((key, index) => (
-                          <tr key={index}>
+                        {Object.keys(event.evalCriteria).map((key, _) => (
+                          <tr key={key}>
                             <td className="border px-4 py-2">{key}</td>
                             <td className="border px-4 py-2">
                               {event.evalCriteria[key]}
@@ -203,6 +209,7 @@ export default function ManageEvents() {
                   <td className="border px-4 py-2">
                     <div className="flex flex-col gap-2">
                       <button
+                        type="button"
                         className="bg-[#cefdff] text-[#0b0d35] font-bold px-4 py-1 rounded-xl"
                         onClick={() => {
                           setEventNameBuffer(event.name);
@@ -239,6 +246,7 @@ export default function ManageEvents() {
                 Update Judging Criteria
               </DialogTitle>
               <button
+                type="button"
                 onClick={() => setCIsOpen(false)}
                 className="bg-gray-200 p-2 rounded-full"
               >
@@ -249,6 +257,7 @@ export default function ManageEvents() {
                   viewBox="0 0 24 24"
                   stroke="black"
                 >
+                  <title>SVG Icon</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -274,7 +283,7 @@ export default function ManageEvents() {
                 </thead>
                 <tbody>
                   {criteriaBuffer.map((_, index) => (
-                    <tr key={index}>
+                    <tr key={criteriaBuffer[index]}>
                       <td className="border px-4 py-2">
                         <input
                           type="text"
@@ -302,6 +311,7 @@ export default function ManageEvents() {
                       </td>
                       <td className="border px-4 py-2">
                         <button
+                          type="button"
                           className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
                           onClick={() => {
                             const _criteriaBuffer = [...criteriaBuffer];
@@ -320,7 +330,7 @@ export default function ManageEvents() {
                     <td className="border px-4 py-2 font-bold">
                       {criteriaBuffer
                         .map((c) => c[1])
-                        .reduce((a, b) => a + parseInt(b), 0)}
+                        .reduce((a, b) => a + parseInt(b, 10), 0)}
                     </td>
                   </tr>
                 </tbody>
@@ -328,6 +338,7 @@ export default function ManageEvents() {
 
               <div className="flex flex-row gap-4">
                 <button
+                  type="button"
                   className="bg-[#f6ffce] text-[#30350b] font-bold px-4 py-1 rounded-xl"
                   onClick={() => {
                     setCriteriaBuffer([...criteriaBuffer, ['', 0]]);
@@ -338,6 +349,7 @@ export default function ManageEvents() {
               </div>
 
               <button
+                type="button"
                 className="bg-[#d3ffce] text-[#0b3511] font-bold px-4 py-1 rounded-xl"
                 onClick={() => {
                   setIsLoading(true);

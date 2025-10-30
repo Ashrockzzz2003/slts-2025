@@ -1,13 +1,8 @@
 'use client';
 
-import {
-  Description,
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-} from '@headlessui/react';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 import { getRegistrationData, submitCorrectionRequest } from '@/app/_util/data';
 import { auth } from '@/app/_util/initApp';
@@ -60,6 +55,20 @@ export default function AdminDashboard() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // IDs for some components
+  const searchInputId = useId();
+
+  const districtSelectId = useId();
+  const eventSelectId = useId();
+  const groupSelectId = useId();
+  const needForPickupSelectId = useId();
+  const modeOfTravelSelectId = useId();
+  const needForDropSelectId = useId();
+  const modeOfTravelForDropSelectId = useId();
+  const needForAccommodationSelectId = useId();
+  const checkInDateSelectId = useId();
+  const checkOutDateSelectId = useId();
+
   useEffect(() => {
     if (!secureLocalStorage.getItem('user')) {
       router.push('/');
@@ -69,7 +78,7 @@ export default function AdminDashboard() {
     setUser(user);
     getRegistrationData().then((_data) => {
       // Handle Logout.
-      if (_data == null || _data.length != 8) {
+      if (_data == null || _data.length !== 8) {
         router.push('/');
       }
 
@@ -149,6 +158,7 @@ export default function AdminDashboard() {
           </div>
           <div className="flex flex-row">
             <button
+              type="button"
               className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
               onClick={() => router.push('/admin/event')}
             >
@@ -161,6 +171,7 @@ export default function AdminDashboard() {
                             Accommodation
                         </button> */}
             <button
+              type="button"
               className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
               onClick={() => {
                 auth.signOut();
@@ -178,7 +189,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-4">
               <div>
                 <input
-                  id="search"
+                  id={searchInputId}
                   className="border pt-2 pb-2 pl-4 rounded-2xl w-full"
                   placeholder="Search by name or student ID"
                   value={searchQuery}
@@ -189,21 +200,21 @@ export default function AdminDashboard() {
               <div className="flex flex-col md:flex-row gap-8 items-center">
                 <div className="flex flex-col grow w-full md:w-auto">
                   <label
-                    htmlFor="district"
+                    htmlFor={districtSelectId}
                     className="mb-2"
                   >
                     <b>District</b>
                   </label>
                   <select
-                    id="district"
+                    id={districtSelectId}
                     className="border p-2 rounded-2xl"
                     value={filterDistrict}
                     onChange={(e) => setFilterDistrict(e.target.value)}
                   >
                     <option value="">All</option>
-                    {districts.map((district, index) => (
+                    {districts.map((district, _) => (
                       <option
-                        key={index}
+                        key={district}
                         value={district}
                       >
                         {district}
@@ -213,21 +224,21 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex flex-col grow w-full">
                   <label
-                    htmlFor="event"
+                    htmlFor={eventSelectId}
                     className="mb-2"
                   >
                     <b>Event</b>
                   </label>
                   <select
-                    id="event"
+                    id={eventSelectId}
                     className="border p-2 rounded-2xl"
                     value={filterEvent}
                     onChange={(e) => setFilterEvent(e.target.value)}
                   >
                     <option value="">All</option>
-                    {events.map((event, index) => (
+                    {events.map((event, _) => (
                       <option
-                        key={index}
+                        key={event}
                         value={event}
                       >
                         {event}
@@ -237,21 +248,21 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex flex-col grow w-full">
                   <label
-                    htmlFor="group"
+                    htmlFor={groupSelectId}
                     className="mb-2"
                   >
                     <b>Group</b>
                   </label>
                   <select
-                    id="group"
+                    id={groupSelectId}
                     className="border p-2 rounded-2xl"
                     value={filterGroup}
                     onChange={(e) => setFilterGroup(e.target.value)}
                   >
                     <option value="">All</option>
-                    {groups.map((group, index) => (
+                    {groups.map((group, _) => (
                       <option
-                        key={index}
+                        key={group}
                         value={group}
                       >
                         {group}
@@ -268,11 +279,11 @@ export default function AdminDashboard() {
           <div className="bg-white p-4 rounded-2xl border grow w-full md:w-auto">
             <div className="flex flex-row flex-wrap justify-between gap-2">
               <div className="flex flex-col gap-2 w-full md:w-auto">
-                <label htmlFor="needForPickup">
+                <label htmlFor={needForPickupSelectId}>
                   <b>Needs Pickup</b>
                 </label>
                 <select
-                  id="needForPickup"
+                  id={needForPickupSelectId}
                   className="border p-2 rounded-2xl"
                   value={filterNeedForPickup}
                   onChange={(e) => setFilterNeedForPickup(e.target.value)}
@@ -283,19 +294,19 @@ export default function AdminDashboard() {
                 </select>
               </div>
               <div className="flex flex-col gap-2 w-full md:w-auto">
-                <label htmlFor="modeOfTravel">
+                <label htmlFor={modeOfTravelSelectId}>
                   <b>Mode Of Travel</b>
                 </label>
                 <select
-                  id="modeOfTravel"
+                  id={modeOfTravelSelectId}
                   className="border p-2 rounded-2xl"
                   value={filterModeOfTravel}
                   onChange={(e) => setFilterModeOfTravel(e.target.value)}
                 >
                   <option value="">All</option>
-                  {modeOfTravelOptions.map((mode, index) => (
+                  {modeOfTravelOptions.map((mode, _) => (
                     <option
-                      key={index}
+                      key={mode}
                       value={mode}
                     >
                       {mode}
@@ -309,11 +320,11 @@ export default function AdminDashboard() {
           <div className="bg-white p-4 rounded-2xl border grow w-full md:w-auto">
             <div className="flex flex-row flex-wrap justify-between gap-2">
               <div className="flex flex-col gap-2 w-full md:w-auto">
-                <label htmlFor="needForDrop">
+                <label htmlFor={needForDropSelectId}>
                   <b>Needs Drop</b>
                 </label>
                 <select
-                  id="needForDrop"
+                  id={needForDropSelectId}
                   className="border p-2 rounded-2xl"
                   value={filterNeedForDrop}
                   onChange={(e) => setFilterNeedForDrop(e.target.value)}
@@ -324,19 +335,19 @@ export default function AdminDashboard() {
                 </select>
               </div>
               <div className="flex flex-col justify-between gap-2 w-full md:w-auto">
-                <label htmlFor="modeOfTravelForDrop">
+                <label htmlFor={modeOfTravelForDropSelectId}>
                   <b>Mode Of Travel</b>
                 </label>
                 <select
-                  id="modeOfTravelForDrop"
+                  id={modeOfTravelForDropSelectId}
                   className="border p-2 rounded-2xl"
                   value={filterModeOfTravelForDrop}
                   onChange={(e) => setFilterModeOfTravelForDrop(e.target.value)}
                 >
                   <option value="">All</option>
-                  {modeOfTravelForDropOptions.map((mode, index) => (
+                  {modeOfTravelForDropOptions.map((mode, _) => (
                     <option
-                      key={index}
+                      key={mode}
                       value={mode}
                     >
                       {mode}
@@ -350,11 +361,11 @@ export default function AdminDashboard() {
           <div className="bg-white p-4 rounded-2xl border grow w-full md:w-auto">
             <div className="flex flex-col md:flex-row flex-wrap justify-between gap-2">
               <div className="flex flex-col gap-2 w-full md:w-auto">
-                <label htmlFor="needForAccommodation">
+                <label htmlFor={needForAccommodationSelectId}>
                   <b>Needs Accommodation</b>
                 </label>
                 <select
-                  id="needForAccommodation"
+                  id={needForAccommodationSelectId}
                   className="border p-2 rounded-2xl"
                   value={filterNeedForAccommodation}
                   onChange={(e) =>
@@ -371,15 +382,15 @@ export default function AdminDashboard() {
                   <b>Check In Date</b>
                 </label>
                 <select
-                  id="checkInDate"
+                  id={checkInDateSelectId}
                   className="border p-2 rounded-2xl"
                   value={filterCheckInDate}
                   onChange={(e) => setFilterCheckInDate(e.target.value)}
                 >
                   <option value="">All</option>
-                  {checkInDateOptions.map((date, index) => (
+                  {checkInDateOptions.map((date, _) => (
                     <option
-                      key={index}
+                      key={date}
                       value={date}
                     >
                       {date}
@@ -392,15 +403,15 @@ export default function AdminDashboard() {
                   <b>Check Out Date</b>
                 </label>
                 <select
-                  id="checkOutDate"
+                  id={checkOutDateSelectId}
                   className="border p-2 rounded-2xl"
                   value={filterCheckOutDate}
                   onChange={(e) => setFilterCheckOutDate(e.target.value)}
                 >
                   <option value="">All</option>
-                  {checkOutDateOptions.map((date, index) => (
+                  {checkOutDateOptions.map((date, _) => (
                     <option
-                      key={index}
+                      key={date}
                       value={date}
                     >
                       {date}
@@ -426,7 +437,7 @@ export default function AdminDashboard() {
                 <p className="text-4xl font-bold">
                   {filteredData.reduce(
                     (acc, row) =>
-                      acc + parseInt((row.gender == 'Male' ? 1 : 0) ?? 0),
+                      acc + parseInt((row.gender === 'Male' ? 1 : 0) ?? 0, 10),
                     0,
                   )}
                 </p>
@@ -436,7 +447,8 @@ export default function AdminDashboard() {
                 <p className="text-4xl font-bold">
                   {filteredData.reduce(
                     (acc, row) =>
-                      acc + parseInt((row.gender == 'Female' ? 1 : 0) ?? 0),
+                      acc +
+                      parseInt((row.gender === 'Female' ? 1 : 0) ?? 0, 10),
                     0,
                   )}
                 </p>
@@ -446,12 +458,13 @@ export default function AdminDashboard() {
                 <p className="text-4xl font-bold">
                   {filteredData.reduce(
                     (acc, row) =>
-                      acc + parseInt((row.gender == 'Male' ? 1 : 0) ?? 0),
+                      acc + parseInt((row.gender === 'Male' ? 1 : 0) ?? 0, 10),
                     0,
                   ) +
                     filteredData.reduce(
                       (acc, row) =>
-                        acc + parseInt((row.gender == 'Female' ? 1 : 0) ?? 0),
+                        acc +
+                        parseInt((row.gender === 'Female' ? 1 : 0) ?? 0, 10),
                       0,
                     )}
                 </p>
@@ -470,7 +483,8 @@ export default function AdminDashboard() {
                 <p className="text-sm font-bold">Male</p>
                 <p className="text-4xl font-bold">
                   {filteredData.reduce(
-                    (acc, row) => acc + parseInt(row.numMaleAccompanying ?? 0),
+                    (acc, row) =>
+                      acc + parseInt(row.numMaleAccompanying ?? 0, 10),
                     0,
                   )}
                 </p>
@@ -480,7 +494,7 @@ export default function AdminDashboard() {
                 <p className="text-4xl font-bold">
                   {filteredData.reduce(
                     (acc, row) =>
-                      acc + parseInt(row.numFemaleAccompanying ?? 0),
+                      acc + parseInt(row.numFemaleAccompanying ?? 0, 10),
                     0,
                   )}
                 </p>
@@ -490,7 +504,7 @@ export default function AdminDashboard() {
                 <p className="text-4xl font-bold">
                   {filteredData.reduce(
                     (acc, row) =>
-                      acc + parseInt(row.numNonParticipatingSiblings ?? 0),
+                      acc + parseInt(row.numNonParticipatingSiblings ?? 0, 10),
                     0,
                   )}
                 </p>
@@ -499,17 +513,19 @@ export default function AdminDashboard() {
                 <p className="text-sm font-bold">Total</p>
                 <p className="text-4xl font-bold">
                   {filteredData.reduce(
-                    (acc, row) => acc + parseInt(row.numMaleAccompanying ?? 0),
+                    (acc, row) =>
+                      acc + parseInt(row.numMaleAccompanying ?? 0, 10),
                     0,
                   ) +
                     filteredData.reduce(
                       (acc, row) =>
-                        acc + parseInt(row.numFemaleAccompanying ?? 0),
+                        acc + parseInt(row.numFemaleAccompanying ?? 0, 10),
                       0,
                     ) +
                     filteredData.reduce(
                       (acc, row) =>
-                        acc + parseInt(row.numNonParticipatingSiblings ?? 0),
+                        acc +
+                        parseInt(row.numNonParticipatingSiblings ?? 0, 10),
                       0,
                     )}
                 </p>
@@ -534,6 +550,7 @@ export default function AdminDashboard() {
                           acc +
                           parseInt(
                             row.numMaleAccompanyingNeedAccommodation ?? 0,
+                            10,
                           ),
                         0,
                       )}
@@ -547,6 +564,7 @@ export default function AdminDashboard() {
                           acc +
                           parseInt(
                             row.numFemaleAccompanyingNeedAccommodation ?? 0,
+                            10,
                           ),
                         0,
                       )}
@@ -575,10 +593,11 @@ export default function AdminDashboard() {
                         (acc, row) =>
                           acc +
                           parseInt(
-                            (row.needsAccommodation == 'Yes' &&
-                            row.gender == 'Male'
+                            (row.needsAccommodation === 'Yes' &&
+                            row.gender === 'Male'
                               ? 1
                               : 0) ?? 0,
+                            10,
                           ),
                         0,
                       )}
@@ -591,10 +610,11 @@ export default function AdminDashboard() {
                         (acc, row) =>
                           acc +
                           parseInt(
-                            (row.needsAccommodation == 'Yes' &&
-                            row.gender == 'Female'
+                            (row.needsAccommodation === 'Yes' &&
+                            row.gender === 'Female'
                               ? 1
                               : 0) ?? 0,
+                            10,
                           ),
                         0,
                       )}
@@ -625,10 +645,11 @@ export default function AdminDashboard() {
                       (acc, row) =>
                         acc +
                         parseInt(
-                          (row.needsAccommodation == 'Yes' &&
-                          row.gender == 'Male'
+                          (row.needsAccommodation === 'Yes' &&
+                          row.gender === 'Male'
                             ? 1
                             : 0) ?? 0,
+                          10,
                         ),
                       0,
                     ) +
@@ -637,6 +658,7 @@ export default function AdminDashboard() {
                           acc +
                           parseInt(
                             row.numMaleAccompanyingNeedAccommodation ?? 0,
+                            10,
                           ),
                         0,
                       )}
@@ -649,10 +671,11 @@ export default function AdminDashboard() {
                       (acc, row) =>
                         acc +
                         parseInt(
-                          (row.needsAccommodation == 'Yes' &&
-                          row.gender == 'Female'
+                          (row.needsAccommodation === 'Yes' &&
+                          row.gender === 'Female'
                             ? 1
                             : 0) ?? 0,
+                          10,
                         ),
                       0,
                     ) +
@@ -661,6 +684,7 @@ export default function AdminDashboard() {
                           acc +
                           parseInt(
                             row.numFemaleAccompanyingNeedAccommodation ?? 0,
+                            10,
                           ),
                         0,
                       )}
@@ -673,10 +697,11 @@ export default function AdminDashboard() {
                       (acc, row) =>
                         acc +
                         parseInt(
-                          (row.needsAccommodation == 'Yes' &&
-                          row.gender == 'Male'
+                          (row.needsAccommodation === 'Yes' &&
+                          row.gender === 'Male'
                             ? 1
                             : 0) ?? 0,
+                          10,
                         ),
                       0,
                     ) +
@@ -684,10 +709,11 @@ export default function AdminDashboard() {
                         (acc, row) =>
                           acc +
                           parseInt(
-                            (row.needsAccommodation == 'Yes' &&
-                            row.gender == 'Female'
+                            (row.needsAccommodation === 'Yes' &&
+                            row.gender === 'Female'
                               ? 1
                               : 0) ?? 0,
+                            10,
                           ),
                         0,
                       ) +
@@ -696,6 +722,7 @@ export default function AdminDashboard() {
                           acc +
                           parseInt(
                             row.numMaleAccompanyingNeedAccommodation ?? 0,
+                            10,
                           ),
                         0,
                       ) +
@@ -704,6 +731,7 @@ export default function AdminDashboard() {
                           acc +
                           parseInt(
                             row.numFemaleAccompanyingNeedAccommodation ?? 0,
+                            10,
                           ),
                         0,
                       )}
@@ -716,9 +744,9 @@ export default function AdminDashboard() {
 
         {/* Mobile View */}
         <div className="bg-white p-2 rounded-3xl border flex flex-col justify-between m-4 md:hidden gap-4">
-          {filteredData.map((row, index) => (
+          {filteredData.map((row, _) => (
             <div
-              key={index}
+              key={row}
               className={`${row.overallRegistrationStatus === 'Accepted' ? 'bg-gray-100' : 'bg-red-200'} text-bold flex flex-col gap-2 rounded-2xl`}
             >
               <div className="px-4 pt-2">
@@ -749,9 +777,9 @@ export default function AdminDashboard() {
                 <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
                   {row.studentGroup ?? '-'}
                 </p>
-                {row.registeredEvents.map((event, index) => (
+                {row.registeredEvents.map((event, _) => (
                   <p
-                    key={index}
+                    key={event}
                     className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit"
                   >
                     {event ?? '-'}
@@ -759,7 +787,7 @@ export default function AdminDashboard() {
                 ))}
               </div>
               <div className="mt-2 px-3">
-                {row.correctionRequest && row.correctionRequest.sd ? (
+                {row.correctionRequest?.sd ? (
                   <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                     <p className="text-xs text-red-800 font-semibold">
                       Correction Requested
@@ -776,6 +804,7 @@ export default function AdminDashboard() {
                       {row.correctionRequest.sd.correctedByPhoneNumber ?? '-'}
                     </p>
                     <button
+                      type="button"
                       className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                       onClick={() => {
                         setCorrectionData(row);
@@ -802,6 +831,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <button
+                    type="button"
                     className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                     onClick={() => {
                       setCorrectionData(row);
@@ -870,7 +900,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="mt-2 px-3">
-                {row.correctionRequest && row.correctionRequest.ad ? (
+                {row.correctionRequest?.ad ? (
                   <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                     <p className="text-xs text-red-800 font-semibold">
                       Correction Requested
@@ -887,6 +917,7 @@ export default function AdminDashboard() {
                       {row.correctionRequest.ad.correctedByPhoneNumber ?? '-'}
                     </p>
                     <button
+                      type="button"
                       className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                       onClick={() => {
                         setCorrectionData(row);
@@ -913,6 +944,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <button
+                    type="button"
                     className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                     onClick={() => {
                       setCorrectionData(row);
@@ -970,7 +1002,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="mt-2 px-3">
-                {row.correctionRequest && row.correctionRequest.ac ? (
+                {row.correctionRequest?.ac ? (
                   <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                     <p className="text-xs text-red-800 font-semibold">
                       Correction Requested
@@ -987,6 +1019,7 @@ export default function AdminDashboard() {
                       {row.correctionRequest.ac.correctedByPhoneNumber ?? '-'}
                     </p>
                     <button
+                      type="button"
                       className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                       onClick={() => {
                         setCorrectionData(row);
@@ -1013,6 +1046,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <button
+                    type="button"
                     className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                     onClick={() => {
                       setCorrectionData(row);
@@ -1062,7 +1096,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="mt-2 px-3 pb-4">
-                {row.correctionRequest && row.correctionRequest.rc ? (
+                {row.correctionRequest?.rc ? (
                   <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                     <p className="text-xs text-red-800 font-semibold">
                       Correction Requested
@@ -1079,6 +1113,7 @@ export default function AdminDashboard() {
                       {row.correctionRequest.rc.correctedByPhoneNumber ?? '-'}
                     </p>
                     <button
+                      type="button"
                       className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                       onClick={() => {
                         setCorrectionData(row);
@@ -1105,6 +1140,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <button
+                    type="button"
                     className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                     onClick={() => {
                       setCorrectionData(row);
@@ -1143,9 +1179,9 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((row, index) => (
+              {filteredData.map((row, _) => (
                 <tr
-                  key={index}
+                  key={row}
                   className={`${row.overallRegistrationStatus === 'Accepted' ? 'bg-white' : 'bg-red-200'} hover:bg-blue-50 text-bold transition duration-200`}
                 >
                   <td className="px-4 py-2 border max-w-[160px]">
@@ -1162,7 +1198,7 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                     <div className="mt-2 px-3">
-                      {row.correctionRequest && row.correctionRequest.sd ? (
+                      {row.correctionRequest?.sd ? (
                         <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                           <p className="text-xs text-red-800 font-semibold">
                             Correction Requested
@@ -1180,6 +1216,7 @@ export default function AdminDashboard() {
                               '-'}
                           </p>
                           <button
+                            type="button"
                             className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                             onClick={() => {
                               setCorrectionData(row);
@@ -1206,6 +1243,7 @@ export default function AdminDashboard() {
                         </div>
                       ) : (
                         <button
+                          type="button"
                           className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                           onClick={() => {
                             setCorrectionData(row);
@@ -1239,9 +1277,9 @@ export default function AdminDashboard() {
                       </p>
                     )}
                     <div className="flex flex-wrap mt-2 gap-1">
-                      {row.registeredEvents.map((event, index) => (
+                      {row.registeredEvents.map((event, _) => (
                         <p
-                          key={index}
+                          key={event}
                           className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit"
                         >
                           {event ?? '-'}
@@ -1295,7 +1333,7 @@ export default function AdminDashboard() {
                         )}
                       </div>
                       <div className="mt-2 px-3">
-                        {row.correctionRequest && row.correctionRequest.ad ? (
+                        {row.correctionRequest?.ad ? (
                           <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                             <p className="text-xs text-red-800 font-semibold">
                               Correction Requested
@@ -1314,6 +1352,7 @@ export default function AdminDashboard() {
                                 .correctedByPhoneNumber ?? '-'}
                             </p>
                             <button
+                              type="button"
                               className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                               onClick={() => {
                                 setCorrectionData(row);
@@ -1341,6 +1380,7 @@ export default function AdminDashboard() {
                           </div>
                         ) : (
                           <button
+                            type="button"
                             className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                             onClick={() => {
                               setCorrectionData(row);
@@ -1395,7 +1435,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="mt-2 px-3">
-                      {row.correctionRequest && row.correctionRequest.ac ? (
+                      {row.correctionRequest?.ac ? (
                         <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                           <p className="text-xs text-red-800 font-semibold">
                             Correction Requested
@@ -1413,6 +1453,7 @@ export default function AdminDashboard() {
                               '-'}
                           </p>
                           <button
+                            type="button"
                             className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                             onClick={() => {
                               setCorrectionData(row);
@@ -1439,6 +1480,7 @@ export default function AdminDashboard() {
                         </div>
                       ) : (
                         <button
+                          type="button"
                           className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                           onClick={() => {
                             setCorrectionData(row);
@@ -1487,7 +1529,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="mt-2 px-3 pb-4">
-                      {row.correctionRequest && row.correctionRequest.rc ? (
+                      {row.correctionRequest?.rc ? (
                         <div className="bg-red-100 p-2 rounded-xl border border-red-300">
                           <p className="text-xs text-red-800 font-semibold">
                             Correction Requested
@@ -1505,6 +1547,7 @@ export default function AdminDashboard() {
                               '-'}
                           </p>
                           <button
+                            type="button"
                             className="bg-[#fbb7b7] text-[#350b0b] p-2 font-bold text-xs rounded-lg mt-2 w-full"
                             onClick={() => {
                               setCorrectionData(row);
@@ -1531,6 +1574,7 @@ export default function AdminDashboard() {
                         </div>
                       ) : (
                         <button
+                          type="button"
                           className="bg-[#fbfbb7] text-[#2c350b] p-1 font-bold border border-yellow-300 text-xs rounded-lg"
                           onClick={() => {
                             setCorrectionData(row);
@@ -1570,6 +1614,7 @@ export default function AdminDashboard() {
                 {dialogTitle}
               </DialogTitle>
               <button
+                type="button"
                 onClick={() => setIsCorrectionDialogOpen(false)}
                 className="bg-gray-200 p-1 rounded-full"
               >
@@ -1580,6 +1625,7 @@ export default function AdminDashboard() {
                   viewBox="0 0 24 24"
                   stroke="black"
                 >
+                  <title>SVG Icon</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1629,9 +1675,9 @@ export default function AdminDashboard() {
                       <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
                         {correctionData.studentGroup ?? '-'}
                       </p>
-                      {correctionData.registeredEvents.map((event, index) => (
+                      {correctionData.registeredEvents.map((event, _) => (
                         <p
-                          key={index}
+                          key={event}
                           className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit"
                         >
                           {event ?? '-'}
@@ -1811,6 +1857,7 @@ export default function AdminDashboard() {
 
                   <div className="flex flex-row justify-between mt-2">
                     <button
+                      type="button"
                       className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
                       disabled={isLoading}
                       onClick={() => {
@@ -1820,6 +1867,7 @@ export default function AdminDashboard() {
                       Cancel
                     </button>
                     <button
+                      type="button"
                       className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
                       disabled={
                         isLoading ||
@@ -1839,7 +1887,7 @@ export default function AdminDashboard() {
                           .then((res) => {
                             setIsLoading(false);
                             if (res === true) {
-                              data.map((row, index) => {
+                              data.forEach((row, index) => {
                                 if (
                                   row.studentId === correctionData.studentId
                                 ) {

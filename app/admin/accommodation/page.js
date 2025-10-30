@@ -9,14 +9,13 @@ import { auth } from '@/app/_util/initApp';
 export default function DistrictStats() {
   const router = useRouter();
 
-  // State variables
   const [user, setUser] = useState(null);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [checkInDateOptions, setCheckInDateOptions] = useState([]);
-  const [checkOutDateOptions, setCheckOutDateOptions] = useState([]);
-  const [checkInData, setCheckInData] = useState([]);
+  const [_districts, setDistricts] = useState([]);
+  const [_checkInDateOptions, setCheckInDateOptions] = useState([]);
+  const [_checkOutDateOptions, setCheckOutDateOptions] = useState([]);
+  // const [checkInData, setCheckInData] = useState([]);
   const [uniqueDates, setUniqueDates] = useState([]);
 
   const [filterDate, setFilterDate] = useState('');
@@ -151,12 +150,14 @@ export default function DistrictStats() {
 
         <div className="flex flex-row">
           <button
+            type="button"
             className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
             onClick={() => router.push('/admin')}
           >
             Dashboard
           </button>
           <button
+            type="button"
             className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
             onClick={() => {
               auth.signOut();
@@ -170,9 +171,10 @@ export default function DistrictStats() {
       </div>
 
       <div className="flex flex-wrap gap-2 my-4">
-        {uniqueDates.map((date, idx) => (
+        {uniqueDates.map((date, _idx) => (
           <button
-            key={idx}
+            type="button"
+            key={date}
             className={`px-4 py-2 rounded-xl ${
               filterDate === date ? 'bg-blue-500 text-white' : 'bg-gray-200'
             }`}
@@ -188,16 +190,16 @@ export default function DistrictStats() {
           Check-In Date: {filterDate}
         </h1>
         <div className="flex flex-col gap-4">
-          {filteredData[uniqueDates.indexOf(filterDate)].rows.map((g, i1) => (
+          {filteredData[uniqueDates.indexOf(filterDate)].rows.map((g, _) => (
             <div
-              key={i1}
+              key={g}
               className="bg-white p-4 rounded-2xl border"
             >
               <p className="text-sm font-bold">
                 Time: {time24hrTo12hr(g.checkInTime)}
               </p>
-              {g.rows.map((r, i2) => (
-                <div key={i2}>
+              {g.rows.map((r, _) => (
+                <div key={r}>
                   <p className="text-lg font-semibold text-gray-500">
                     {r.district}
                   </p>
@@ -211,12 +213,14 @@ export default function DistrictStats() {
                             ((row.needsAccommodation === 'Yes' ||
                               parseInt(
                                 row.numMaleAccompanyingNeedAccommodation,
+                                10,
                               ) > 0) &&
                             row.gender === 'Male'
                               ? 1
                               : 0) +
                             (parseInt(
                               row.numMaleAccompanyingNeedAccommodation,
+                              10,
                             ) || 0),
                           0,
                         )}
@@ -231,12 +235,14 @@ export default function DistrictStats() {
                             ((row.needsAccommodation === 'Yes' ||
                               parseInt(
                                 row.numFemaleAccompanyingNeedAccommodation,
+                                10,
                               ) > 0) &&
                             row.gender === 'Female'
                               ? 1
                               : 0) +
                             (parseInt(
                               row.numFemaleAccompanyingNeedAccommodation,
+                              10,
                             ) || 0),
                           0,
                         )}
@@ -249,25 +255,30 @@ export default function DistrictStats() {
                           (acc, row) =>
                             acc +
                             (row.needsAccommodation === 'Yes' ||
-                            parseInt(row.numMaleAccompanyingNeedAccommodation) >
-                              0 ||
+                            parseInt(
+                              row.numMaleAccompanyingNeedAccommodation,
+                              10,
+                            ) > 0 ||
                             parseInt(
                               row.numFemaleAccompanyingNeedAccommodation,
+                              10,
                             ) > 0
                               ? 1
                               : 0) +
                             (parseInt(
                               row.numMaleAccompanyingNeedAccommodation,
+                              10,
                             ) || 0) +
                             (parseInt(
                               row.numFemaleAccompanyingNeedAccommodation,
+                              10,
                             ) || 0),
                           0,
                         )}
                       </p>
                     </div>
                   </div>
-                  {i2 == g.rows.length - 1 ? null : <hr className="my-4" />}
+                  {i2 === g.rows.length - 1 ? null : <hr className="my-4" />}
                 </div>
               ))}
             </div>

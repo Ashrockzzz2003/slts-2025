@@ -2,8 +2,7 @@
 
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import secureLocalStorage from 'react-secure-storage';
+import { useEffect, useId, useState } from 'react';
 import {
   getDistrictData,
   markEntry,
@@ -19,7 +18,7 @@ export default function AdminDashboard() {
   const [filteredData, setFilteredData] = useState(null);
 
   // filters.
-  const [districts, setDistricts] = useState([
+  const [districts, _setDistricts] = useState([
     'Chennai East Coast',
     'Chennai North',
     'Chennai North West',
@@ -72,19 +71,26 @@ export default function AdminDashboard() {
   const [markLoading, setMarkLoading] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
 
+  // IDs for certain components
+  const searchInputId = useId();
+
+  const eventSelectId = useId();
+  const groupSelectId = useId();
+  const districtSelectId = useId();
+
   useEffect(() => {
     const user = {
       name: 'Registration Desk',
       email: 'regdesk@slts.cbe',
     };
     setUser(user);
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (filterDistrict !== '') {
       getDistrictData(filterDistrict).then((_data) => {
         // Handle Logout.
-        if (_data == null || _data.length != 8) {
+        if (_data == null || _data.length !== 8) {
           router.push('/');
         }
 
@@ -134,21 +140,21 @@ export default function AdminDashboard() {
         <div className="bg-white p-4 rounded-2xl border w-auto m-4">
           <div className="flex flex-col grow w-full md:w-auto">
             <label
-              htmlFor="district"
+              htmlFor={districtSelectId}
               className="mb-2"
             >
               <b>District</b>
             </label>
             <select
-              id="district"
+              id={districtSelectId}
               className="border p-2 rounded-2xl"
               value={filterDistrict}
               onChange={(e) => setFilterDistrict(e.target.value)}
             >
               <option value="">Select district</option>
-              {districts.map((district, index) => (
+              {districts.map((district, _) => (
                 <option
-                  key={index}
+                  key={district}
                   value={district}
                 >
                   {district}
@@ -163,7 +169,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-4">
               <div>
                 <input
-                  id="search"
+                  id={searchInputId}
                   className="border pt-2 pb-2 pl-4 rounded-2xl w-full"
                   placeholder="Search by name or student ID"
                   value={searchQuery}
@@ -174,21 +180,21 @@ export default function AdminDashboard() {
               <div className="flex flex-col md:flex-row gap-8 items-center">
                 <div className="flex flex-col grow w-full">
                   <label
-                    htmlFor="event"
+                    htmlFor={eventSelectId}
                     className="mb-2"
                   >
                     <b>Event</b>
                   </label>
                   <select
-                    id="event"
+                    id={eventSelectId}
                     className="border p-2 rounded-2xl"
                     value={filterEvent}
                     onChange={(e) => setFilterEvent(e.target.value)}
                   >
                     <option value="">All</option>
-                    {events.map((event, index) => (
+                    {events.map((event, _) => (
                       <option
-                        key={index}
+                        key={event}
                         value={event}
                       >
                         {event}
@@ -198,21 +204,21 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex flex-col grow w-full">
                   <label
-                    htmlFor="group"
+                    htmlFor={groupSelectId}
                     className="mb-2"
                   >
                     <b>Group</b>
                   </label>
                   <select
-                    id="group"
+                    id={groupSelectId}
                     className="border p-2 rounded-2xl"
                     value={filterGroup}
                     onChange={(e) => setFilterGroup(e.target.value)}
                   >
                     <option value="">All</option>
-                    {groups.map((group, index) => (
+                    {groups.map((group, _) => (
                       <option
-                        key={index}
+                        key={group}
                         value={group}
                       >
                         {group}
@@ -227,9 +233,9 @@ export default function AdminDashboard() {
 
         {/* Mobile View */}
         <div className="bg-white p-2 rounded-3xl border flex flex-col justify-between m-4 md:hidden gap-4">
-          {filteredData.map((row, index) => (
+          {filteredData.map((row, _) => (
             <div
-              key={index}
+              key={row}
               className={`${row.overallRegistrationStatus === 'Accepted' ? 'bg-gray-100' : 'bg-red-200'} text-bold flex flex-col gap-2 rounded-2xl`}
             >
               <div className="flex flex-col gap-2 px-4 py-2">
@@ -240,6 +246,7 @@ export default function AdminDashboard() {
                 )}
                 {row.entryMarked === true ? (
                   <button
+                    type="button"
                     className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl w-full"
                     disabled={markLoading}
                     onClick={() => {
@@ -274,6 +281,7 @@ export default function AdminDashboard() {
                   </button>
                 ) : (
                   <button
+                    type="button"
                     className="bg-[#cef0ff] text-[#0b1335] font-bold px-4 py-1 rounded-xl w-full"
                     disabled={markLoading}
                     onClick={() => {
@@ -313,6 +321,7 @@ export default function AdminDashboard() {
                     <p className="text-xs font-bold">Comment</p>
                     <p className="text-xs text-gray-800">{row.entryComment}</p>
                     <button
+                      type="button"
                       className="bg-[#fffac5] text-[#35330b] font-bold px-4 py-1 rounded-xl w-full mt-2"
                       onClick={() => {
                         setCommentStudentId(row.studentId);
@@ -323,6 +332,7 @@ export default function AdminDashboard() {
                       Edit Comment
                     </button>
                     <button
+                      type="button"
                       className="bg-[#ffc5c5] text-[#350b0b] font-bold px-4 py-1 rounded-xl w-full mt-2"
                       onClick={() => {
                         setEditLoading(true);
@@ -357,6 +367,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <button
+                    type="button"
                     className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl w-full"
                     onClick={() => {
                       setCommentStudentId(row.studentId);
@@ -396,9 +407,9 @@ export default function AdminDashboard() {
                 <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
                   {row.studentGroup ?? '-'}
                 </p>
-                {row.registeredEvents.map((event, index) => (
+                {row.registeredEvents.map((event, _) => (
                   <p
-                    key={index}
+                    key={event}
                     className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit"
                   >
                     {event ?? '-'}
@@ -543,9 +554,9 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((row, index) => (
+              {filteredData.map((row, _) => (
                 <tr
-                  key={index}
+                  key={row}
                   className={`${row.overallRegistrationStatus === 'Accepted' ? 'bg-white' : 'bg-red-200'} hover:bg-blue-50 text-bold transition duration-200`}
                 >
                   <td className="px-4 py-2 border max-w-[240px]">
@@ -557,6 +568,7 @@ export default function AdminDashboard() {
                       )}
                       {row.entryMarked === true ? (
                         <button
+                          type="button"
                           className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl w-full"
                           disabled={markLoading}
                           onClick={() => {
@@ -591,6 +603,7 @@ export default function AdminDashboard() {
                         </button>
                       ) : (
                         <button
+                          type="button"
                           className="bg-[#cef0ff] text-[#0b1335] font-bold px-4 py-1 rounded-xl w-full"
                           disabled={markLoading}
                           onClick={() => {
@@ -632,6 +645,7 @@ export default function AdminDashboard() {
                             {row.entryComment}
                           </p>
                           <button
+                            type="button"
                             className="bg-[#fffac5] text-[#35330b] font-bold px-4 py-1 rounded-xl w-full mt-2"
                             onClick={() => {
                               setCommentStudentId(row.studentId);
@@ -642,6 +656,7 @@ export default function AdminDashboard() {
                             Edit Comment
                           </button>
                           <button
+                            type="button"
                             className="bg-[#ffc5c5] text-[#350b0b] font-bold px-4 py-1 rounded-xl w-full mt-2"
                             onClick={() => {
                               setEditLoading(true);
@@ -676,6 +691,7 @@ export default function AdminDashboard() {
                         </div>
                       ) : (
                         <button
+                          type="button"
                           className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl w-full"
                           onClick={() => {
                             setCommentStudentId(row.studentId);
@@ -715,9 +731,9 @@ export default function AdminDashboard() {
                       </p>
                     )}
                     <div className="flex flex-wrap mt-2 gap-1">
-                      {row.registeredEvents.map((event, index) => (
+                      {row.registeredEvents.map((event, _) => (
                         <p
-                          key={index}
+                          key={event}
                           className="text-xs bg-green-200 text-green-800 font-bold rounded-xl p-1 px-2 w-fit"
                         >
                           {event ?? '-'}
@@ -852,6 +868,7 @@ export default function AdminDashboard() {
                 Comments during Registration
               </DialogTitle>
               <button
+                type="button"
                 onClick={() => setIsCorrectionDialogOpen(false)}
                 className="bg-gray-200 p-1 rounded-full"
               >
@@ -862,6 +879,7 @@ export default function AdminDashboard() {
                   viewBox="0 0 24 24"
                   stroke="black"
                 >
+                  <title>SVG Icon</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -886,6 +904,7 @@ export default function AdminDashboard() {
 
                   <div className="flex flex-row justify-between mt-2">
                     <button
+                      type="button"
                       className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
                       disabled={isLoading}
                       onClick={() => {
@@ -895,6 +914,7 @@ export default function AdminDashboard() {
                       Cancel
                     </button>
                     <button
+                      type="button"
                       className="bg-[#dcceff] text-[#270b35] font-bold px-4 py-1 rounded-xl mr-2 my-2 w-full disabled:opacity-50"
                       disabled={
                         isLoading ||
@@ -958,21 +978,21 @@ export default function AdminDashboard() {
       <div className="bg-white p-4 rounded-2xl border w-auto m-4">
         <div className="flex flex-col grow w-full md:w-auto">
           <label
-            htmlFor="district"
+            htmlFor={districtSelectId}
             className="mb-2"
           >
             <b>District</b>
           </label>
           <select
-            id="district"
+            id={districtSelectId}
             className="border p-2 rounded-2xl"
             value={filterDistrict}
             onChange={(e) => setFilterDistrict(e.target.value)}
           >
             <option value="">Select district</option>
-            {districts.map((district, index) => (
+            {districts.map((district, _) => (
               <option
-                key={index}
+                key={district}
                 value={district}
               >
                 {district}
