@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"prepare": "husky",
-		"dev": "next dev",
-		"build": "next build",
+		"dev": "next dev --turbopack",
+		"build": "next build --turbopack",
 		"start": "next start",
 		"lint": "next lint",
 		"firebase:init": "node scripts/initFirestore.js",
