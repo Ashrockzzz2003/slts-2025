@@ -75,7 +75,7 @@ const initEventData = async () => {
 const initRegData = async () => {
   const regData = JSON.parse(readFileSync('scripts/regData.json', 'utf-8'));
   for (const reg of regData) {
-    await db.collection('regData').doc(reg.studentId).set(reg);
+    await db.collection('registrationData_v2').doc(reg.studentId).set(reg);
   }
 };
 

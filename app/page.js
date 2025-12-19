@@ -79,7 +79,7 @@ export default function Home() {
   return (
     <main className="flex h-screen flex-col justify-center items-center m-4 bg-gray-100">
       <h1 className="absolute top-4 left-4 text-[24px] font-bold">
-        SLBTS.2024
+        SLBTS.2025
       </h1>
       {isLoading ? (
         <div className="flex h-screen items-center justify-center">
@@ -89,7 +89,7 @@ export default function Home() {
         <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-gray-200 rounded-3xl w-full md:w-[500px] bg-white shadow-lg">
           <h1 className="text-2xl font-semibold text-center pt-2">Sign In</h1>
           <p className="text-center text-gray-500 pb-2">
-            SLBTS 2024, Tamil Nadu
+            SLBTS 2025, Tamil Nadu
           </p>
           <hr />
           <form

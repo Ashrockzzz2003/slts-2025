@@ -109,8 +109,8 @@ const gilroy = localFont({
 });
 
 export const metadata = {
-  title: 'SLBTS 2024',
-  description: 'Sri Sathya Sai Balvikas Talent Search 2024, Tamil Nadu',
+  title: 'SLBTS 2025',
+  description: 'Sri Sathya Sai Balvikas Talent Search 2025, Tamil Nadu',
 };
 
 export default function RootLayout({ children }) {
