@@ -188,7 +188,7 @@ export const getEventData = async (eventName) => {
   //     return null;
   // }
 
-  const eventDataCollectionRef = collection(db, 'eventData');
+  const eventDataCollectionRef = collection(db, 'eventData_v2');
   const querySnapshot = await getDocs(eventDataCollectionRef);
   const data = [];
 
@@ -217,7 +217,7 @@ export const updateCrieria = async (eventName, criteria) => {
     criteria[key] = parseFloat(criteria[key]);
   });
 
-  await updateDoc(doc(db, 'eventData', eventName), {
+  await updateDoc(doc(db, 'eventData_v2', eventName), {
     evalCriteria: criteria,
   });
 
@@ -229,7 +229,7 @@ export const getJudgeGroupEventData = async (eventName) => {
   //     return null;
   // }
 
-  const eventDoc = await getDoc(doc(db, 'eventData', eventName));
+  const eventDoc = await getDoc(doc(db, 'eventData_v2', eventName));
   const eventMetaData = eventDoc.data();
 
   const participantRef = query(
@@ -267,7 +267,7 @@ export const getJudgeEventData = async (eventName) => {
   //     return null;
   // }
 
-  const eventDoc = await getDoc(doc(db, 'eventData', eventName));
+  const eventDoc = await getDoc(doc(db, 'eventData_v2', eventName));
   const eventMetaData = eventDoc.data();
 
   const participantRef = query(

@@ -564,42 +564,58 @@ export default function JudgePage() {
                             className="flex flex-row justify-between items-center"
                           >
                             <label className="text-sm">{key}</label>
-                            <input
-                              type="number"
-                              className="border p-2 rounded-lg text-md"
-                              max={eventMetadata.evalCriteria[key]}
-                              min={0}
-                              value={val}
-                              onChange={(e) => {
-                                if (e.target.value < 0) {
-                                  e.target.value = 0;
-                                } else if (
-                                  e.target.value >
-                                  eventMetadata.evalCriteria[key]
-                                ) {
-                                  e.target.value =
-                                    eventMetadata.evalCriteria[key];
-                                }
+                            <div className="flex flex-row items-center justify-end gap-1 w-full">
+                              <input
+                                type="number"
+                                className="border p-2 rounded-lg text-md w-[72px] border-slate-300"
+                                max={eventMetadata.evalCriteria[key]}
+                                min={0}
+                                value={val}
+                                onChange={(e) => {
+                                  if (e.target.value < 0) {
+                                    e.target.value = 0;
+                                  } else if (
+                                    e.target.value >
+                                    eventMetadata.evalCriteria[key]
+                                  ) {
+                                    e.target.value =
+                                      eventMetadata.evalCriteria[key];
+                                  }
 
-                                const newBuffer = [...scoreBuffer];
-                                newBuffer[index][1] = e.target.value;
-                                setScoreBuffer(newBuffer);
-                              }}
-                            />
+                                  const newBuffer = [...scoreBuffer];
+                                  newBuffer[index][1] = e.target.value;
+                                  setScoreBuffer(newBuffer);
+                                }}
+                              />
+                              <span className="text-md w-[32px] text-right">
+                                {' '}
+                                / {eventMetadata.evalCriteria[key]}
+                              </span>
+                            </div>
                           </div>
                         ))}
 
                         <hr className="border-dashed mt-2" />
                         <div className="flex flex-row justify-between align-middle">
                           <label className="text-sm">Total</label>
-                          <p className="text-md font-semibold">
-                            {scoreBuffer.reduce(
-                              (a, b) =>
-                                (a == '' ? 0 : a) +
-                                parseInt(b[1] == '' ? 0 : b[1]),
-                              0,
-                            )}
-                          </p>
+                          <div className="flex flex-row items-center justify-end gap-1 w-full">
+                            <p className="text-md font-semibold w-[72px] text-right">
+                              {scoreBuffer.reduce(
+                                (a, b) =>
+                                  (a == '' ? 0 : a) +
+                                  parseInt(b[1] == '' ? 0 : b[1]),
+                                0,
+                              )}
+                            </p>
+                            <span className="text-md w-[32px] text-right">
+                              {' '}
+                              /{' '}
+                              {Object.values(eventMetadata.evalCriteria).reduce(
+                                (a, b) => a + b,
+                                0,
+                              )}
+                            </span>
+                          </div>
                         </div>
 
                         <hr className="border-dashed" />
@@ -745,17 +761,35 @@ export default function JudgePage() {
                           className="flex flex-row justify-between items-center"
                         >
                           <label className="text-sm">{key}</label>
-                          <p className="text-md font-semibold">{val}</p>
+                          <div className="flex flex-row items-center justify-end gap-1 w-full">
+                            <p className="text-md font-semibold w-[72px] text-right">
+                              {val}
+                            </p>
+                            <span className="text-md w-[32px] text-right">
+                              {' '}
+                              / {eventMetadata.evalCriteria[key]}
+                            </span>
+                          </div>
                         </div>
                       ))}
                       <hr className="border-dashed" />
                       <div className="flex flex-row justify-between items-center">
                         <label className="text-sm">Total</label>
-                        <p className="text-md font-semibold">
-                          {Object.values(
-                            participant.score[eventMetadata.name][user.id],
-                          ).reduce((a, b) => a + parseInt(b), 0)}
-                        </p>
+                        <div className="flex flex-row items-center justify-end gap-1 w-full">
+                          <p className="text-md font-semibold w-[72px] text-right">
+                            {Object.values(
+                              participant.score[eventMetadata.name][user.id],
+                            ).reduce((a, b) => a + parseInt(b), 0)}
+                          </p>
+                          <span className="text-md w-[32px] text-right">
+                            {' '}
+                            /{' '}
+                            {Object.values(eventMetadata.evalCriteria).reduce(
+                              (a, b) => a + b,
+                              0,
+                            )}
+                          </span>
+                        </div>
                       </div>
                       <hr className="border-dashed" />
                       <div className="flex flex-col gap-2">
