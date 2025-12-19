@@ -68,14 +68,14 @@ const initEventData = async () => {
     event['judgeIdList'] = event.judgeEmailList.map(
       (email) => judgeEmailToId[email],
     );
-    await db.collection('eventData').doc(event.name).set(event);
+    await db.collection('eventData_v2').doc(event.name).set(event);
   }
 };
 
 const initRegData = async () => {
   const regData = JSON.parse(readFileSync('scripts/regData.json', 'utf-8'));
   for (const reg of regData) {
-    await db.collection('regData').doc(reg.studentId).set(reg);
+    await db.collection('registrationData_v2').doc(reg.studentId).set(reg);
   }
 };
 
