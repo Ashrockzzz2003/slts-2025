@@ -78,7 +78,7 @@ export default function GroupEventLeaderboardPage() {
                   group.judgeWiseTotal[judgeId] = 0;
                 }
 
-                group.judgeWiseTotal[judgeId] += parseInt(
+                group.judgeWiseTotal[judgeId] += parseFloat(
                   group.score[_eventName][judgeId][criteria],
                 );
               });
@@ -267,12 +267,12 @@ export default function GroupEventLeaderboardPage() {
                           key={i}
                           className="text-xs"
                         >
-                          {total}
+                          {parseFloat(total).toFixed(2)}
                         </p>
                       ))}
                     </td>
                     <td className="px-4 py-2 border font-bold">
-                      {group.overallTotal}
+                      {parseFloat(group.overallTotal).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 border">
                       {eventMetadata.judgeIdList.map((judgeId, i2) => (

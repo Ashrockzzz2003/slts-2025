@@ -59,7 +59,7 @@ export default function EventLeaderboardIndiPage() {
                   participant.judgeWiseTotal[judgeId] = 0;
                 }
 
-                participant.judgeWiseTotal[judgeId] += parseInt(
+                participant.judgeWiseTotal[judgeId] += parseFloat(
                   participant.score[_eventName][judgeId][criteria],
                 );
               });
@@ -215,7 +215,7 @@ export default function EventLeaderboardIndiPage() {
                   <tr key={index}>
                     <td
                       className={
-                        'px-4 py-2 border max-w-[160px]' +
+                        'px-4 py-2 border max-w-40' +
                         (row.substitute && row.substitute[eventMetadata.name]
                           ? ' bg-[#ffcece]'
                           : '')
@@ -261,7 +261,7 @@ export default function EventLeaderboardIndiPage() {
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-2 border max-w-[200px]">
+                    <td className="px-4 py-2 border max-w-50">
                       <p className="font-bold">{row.district ?? '-'}</p>
                       <p className="text-xs">{row.samithiName ?? '-'}</p>
                       {row.studentGroup === 'Group 3' && (
@@ -304,12 +304,12 @@ export default function EventLeaderboardIndiPage() {
                           key={index}
                           className="text-xs"
                         >
-                          {total}
+                          {parseFloat(total).toFixed(2)}
                         </p>
                       ))}
                     </td>
                     <td className="px-4 py-2 border font-bold">
-                      {row.overallTotal}
+                      {parseFloat(row.overallTotal).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 border">
                       <div className="flex flex-col">
