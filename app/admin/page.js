@@ -131,93 +131,25 @@ export default function AdminDashboard() {
   ]);
 
   return user && filteredData ? (
-    <div className="min-h-screen bg-slate-100 p-2 md:p-4">
-      <div className="max-w-[1400px] mx-auto bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[calc(100vh-2rem)]">
-        {/* Integrated Header & Controls */}
-        <div className="bg-slate-50 border-b border-slate-200 p-4 space-y-4 shrink-0">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-1.5 bg-indigo-600 rounded-full"></div>
-              <div>
-                <h1 className="text-xl font-black text-slate-900 leading-none">
-                  SLBTS 2025
-                </h1>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
-                  {user.name}
-                </p>
-              </div>
+    <>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">SLBTS 2025</h1>
+              <p className="text-gray-500">{user.name}</p>
             </div>
 
-            {/* Compact Stats Integrated into Header */}
-            <div className="flex items-center gap-8 bg-white px-6 py-3 rounded-2xl border-2 border-slate-100 shadow-sm">
-              <div className="flex items-center gap-5 border-r-2 border-slate-50 pr-8">
-                <p className="text-4xl font-black text-slate-900 leading-none tracking-tighter">
-                  {filteredData.length}
-                </p>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-black text-blue-600 leading-none">
-                    {filteredData.filter((r) => r.gender === 'Male').length}M
-                  </span>
-                  <span className="text-sm font-black text-pink-600 leading-none">
-                    {filteredData.filter((r) => r.gender === 'Female').length}F
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-5">
-                <p className="text-4xl font-black text-slate-900 leading-none tracking-tighter">
-                  {filteredData.reduce(
-                    (acc, row) =>
-                      acc +
-                      (parseInt(row.numMaleAccompanying) || 0) +
-                      (parseInt(row.numFemaleAccompanying) || 0) +
-                      (parseInt(row.numNonParticipatingSiblings) || 0),
-                    0,
-                  )}
-                </p>
-                <div className="flex items-center gap-2.5">
-                  <span className="text-sm font-black text-blue-600">
-                    {filteredData.reduce(
-                      (acc, row) =>
-                        acc + (parseInt(row.numMaleAccompanying) || 0),
-                      0,
-                    )}
-                    M
-                  </span>
-                  <span className="text-sm font-black text-pink-600">
-                    {filteredData.reduce(
-                      (acc, row) =>
-                        acc + (parseInt(row.numFemaleAccompanying) || 0),
-                      0,
-                    )}
-                    F
-                  </span>
-                  <span className="text-sm font-black text-purple-600">
-                    {filteredData.reduce(
-                      (acc, row) =>
-                        acc + (parseInt(row.numNonParticipatingSiblings) || 0),
-                      0,
-                    )}
-                    C
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-2">
+            <div className="flex gap-3 w-full md:w-auto">
               <button
-                className="bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-indigo-700 transition"
+                className="flex-1 md:flex-none bg-indigo-100 text-indigo-800 hover:bg-indigo-200 font-semibold px-4 py-2 rounded-xl transition-colors"
                 onClick={() => router.push('/admin/event')}
               >
                 Events
               </button>
-              {/* <button
-                className="bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-indigo-700 transition"
-                onClick={() => router.push('/admin/accommodation')}
-              >
-                Stay
-              </button> */}
               <button
-                className="bg-red-50 text-red-600 font-bold px-4 py-2 rounded-xl text-sm hover:bg-red-100 transition"
+                className="flex-1 md:flex-none bg-red-100 text-red-800 hover:bg-red-200 font-semibold px-4 py-2 rounded-xl transition-colors"
                 onClick={() => {
                   auth.signOut();
                   secureLocalStorage.clear();
@@ -229,484 +161,556 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Integrated Search & Filters */}
-          <div className="space-y-4">
-            <div className="relative group">
-              <span className="absolute inset-y-0 left-5 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </span>
-              <input
-                className="pl-14 pr-6 py-4 bg-white border-2 border-slate-200 rounded-2xl w-full text-slate-900 placeholder-slate-400 font-black text-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 shadow-sm transition-all outline-none"
-                placeholder="Search by student name or ID..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-7 gap-3">
-              {[
-                {
-                  label: 'District',
-                  setter: setFilterDistrict,
-                  options: districts,
-                  val: filterDistrict,
-                },
-                {
-                  label: 'Event',
-                  setter: setFilterEvent,
-                  options: events,
-                  val: filterEvent,
-                },
-                {
-                  label: 'Group',
-                  setter: setFilterGroup,
-                  options: groups,
-                  val: filterGroup,
-                },
-                {
-                  label: 'Pickup',
-                  setter: setFilterNeedForPickup,
-                  options: ['Yes', 'No'],
-                  val: filterNeedForPickup,
-                },
-                {
-                  label: 'Stay',
-                  setter: setFilterNeedForAccommodation,
-                  options: ['Yes', 'No', 'Own Accommodation'],
-                  val: filterNeedForAccommodation,
-                },
-                {
-                  label: 'Food',
-                  setter: setFilterNeedForFoodPacket,
-                  options: ['Yes', 'No'],
-                  val: filterNeedForFoodPacket,
-                },
-                {
-                  label: 'Accompany',
-                  setter: setFilterHasAccompanying,
-                  options: ['Yes', 'No'],
-                  val: filterHasAccompanying,
-                },
-              ].map((f, i) => (
-                <div
-                  key={i}
-                  className="flex flex-col gap-1.5"
-                >
-                  <label className="text-[11px] font-black uppercase text-slate-500 ml-1 tracking-widest leading-none">
-                    {f.label}
-                  </label>
-                  <select
-                    className="bg-white border-2 border-slate-200 px-3 py-2 rounded-xl text-sm font-bold text-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer"
-                    value={f.val}
-                    onChange={(e) => f.setter(e.target.value)}
+          {/* Stats Section */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-50 rounded-xl">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <option value="">All {f.label}s</option>
-                    {f.options.map((opt, idx) => (
-                      <option
-                        key={idx}
-                        value={opt}
-                      >
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
                 </div>
-              ))}
+                <div>
+                  <p className="text-sm font-medium text-gray-500">
+                    Total Participants
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {filteredData.length}
+                  </p>
+                  <div className="flex gap-2 text-xs font-medium mt-1">
+                    <span className="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                      {filteredData.filter((r) => r.gender === 'Male').length}{' '}
+                      Male
+                    </span>
+                    <span className="text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">
+                      {filteredData.filter((r) => r.gender === 'Female').length}{' '}
+                      Female
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-purple-50 rounded-xl">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-purple-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">
+                    Total Accompanying
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {filteredData.reduce(
+                      (acc, row) =>
+                        acc +
+                        (parseInt(row.numMaleAccompanying) || 0) +
+                        (parseInt(row.numFemaleAccompanying) || 0) +
+                        (parseInt(row.numNonParticipatingSiblings) || 0),
+                      0,
+                    )}
+                  </p>
+                  <div className="flex gap-2 text-xs font-medium mt-1 flex-wrap">
+                    <span className="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                      {filteredData.reduce(
+                        (acc, row) =>
+                          acc + (parseInt(row.numMaleAccompanying) || 0),
+                        0,
+                      )}{' '}
+                      Male
+                    </span>
+                    <span className="text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">
+                      {filteredData.reduce(
+                        (acc, row) =>
+                          acc + (parseInt(row.numFemaleAccompanying) || 0),
+                        0,
+                      )}{' '}
+                      Female
+                    </span>
+                    <span className="text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">
+                      {filteredData.reduce(
+                        (acc, row) =>
+                          acc +
+                          (parseInt(row.numNonParticipatingSiblings) || 0),
+                        0,
+                      )}{' '}
+                      Children (
+                      {filteredData.reduce(
+                        (acc, row) =>
+                          acc + (parseInt(row.numGirlAccompanyingKids) || 0),
+                        0,
+                      )}{' '}
+                      girls,{' '}
+                      {filteredData.reduce(
+                        (acc, row) =>
+                          acc + (parseInt(row.numBoyAccompanyingKids) || 0),
+                        0,
+                      )}{' '}
+                      boys)
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Dense Desktop Table View */}
-        <div className="flex-1 overflow-hidden hidden md:block">
-          <div className="overflow-x-auto h-full scrollbar-hide">
-            <table className="table-auto w-full border-collapse bg-white text-sm">
-              <thead className="sticky top-0 z-20 shadow-md">
-                <tr className="bg-slate-900 text-white border-b border-slate-700">
-                  {[
-                    'Participant & BalVikas',
-                    'Logistics',
-                    'Stay & Accompany',
-                    'Contact & Remarks',
-                  ].map((h, i) => (
-                    <th
-                      key={i}
-                      className="px-5 py-4 text-left font-black uppercase text-sm tracking-widest"
+          {/* Filters Section */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <div className="flex flex-col gap-4">
+              {/* Search */}
+              <div>
+                <label
+                  htmlFor="search"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Search Participants
+                </label>
+                <input
+                  id="search"
+                  className="w-full border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                  placeholder="Search by student name or ID..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              {/* Grid Filters */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  {
+                    label: 'District',
+                    setter: setFilterDistrict,
+                    options: districts,
+                    val: filterDistrict,
+                  },
+                  {
+                    label: 'Event',
+                    setter: setFilterEvent,
+                    options: events,
+                    val: filterEvent,
+                  },
+                  {
+                    label: 'Group',
+                    setter: setFilterGroup,
+                    options: groups,
+                    val: filterGroup,
+                  },
+                  {
+                    label: 'Pickup',
+                    setter: setFilterNeedForPickup,
+                    options: ['Yes', 'No'],
+                    val: filterNeedForPickup,
+                  },
+                  {
+                    label: 'Stay',
+                    setter: setFilterNeedForAccommodation,
+                    options: ['Yes', 'No', 'Own Accommodation'],
+                    val: filterNeedForAccommodation,
+                  },
+                  {
+                    label: 'Food',
+                    setter: setFilterNeedForFoodPacket,
+                    options: ['Yes', 'No'],
+                    val: filterNeedForFoodPacket,
+                  },
+                  {
+                    label: 'Accompany',
+                    setter: setFilterHasAccompanying,
+                    options: ['Yes', 'No'],
+                    val: filterHasAccompanying,
+                  },
+                ].map((f, i) => (
+                  <div key={i}>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {f.label}
+                    </label>
+                    <select
+                      className="w-full border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                      value={f.val}
+                      onChange={(e) => f.setter(e.target.value)}
                     >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredData.map((row, index) => (
-                  <tr
-                    key={index}
-                    className={`${row.overallRegistrationStatus === 'Accepted' ? 'bg-white' : 'bg-red-50/30'} hover:bg-slate-50 transition`}
-                  >
-                    {/* Column 1: Participant */}
-                    <td className="px-5 py-4 align-top border-r border-slate-50 min-w-[300px]">
-                      <div className="flex flex-col gap-2">
-                        <div className="flex justify-between items-start">
-                          <p className="font-black text-slate-900 text-lg leading-tight uppercase truncate pr-2">
-                            {row.studentFullName ?? '-'}
-                          </p>
-                          <span
-                            className={`px-2.5 py-1 rounded-md text-xs font-black uppercase shrink-0 ${row.gender === 'Male' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}`}
-                          >
-                            {row.gender?.[0] ?? '-'}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-slate-500">
-                            {row.studentId ?? '-'}
-                          </span>
-                          <span className="text-sm font-bold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded leading-none">
-                            {row.studentGroup ?? '-'}
-                          </span>
-                        </div>
-                        <div className="mt-1.5">
-                          <p className="text-base font-bold text-slate-800 leading-none truncate">
-                            {row.district ?? '-'}
-                          </p>
-                          <div className="flex flex-wrap gap-2 mt-2">
+                      <option value="">All {f.label}s</option>
+                      {f.options.map((opt, idx) => (
+                        <option
+                          key={idx}
+                          value={opt}
+                        >
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden hidden md:block">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {[
+                      'Participant & BalVikas',
+                      'Logistics',
+                      'Stay & Accompany',
+                      'Contact & Remarks',
+                    ].map((h, i) => (
+                      <th
+                        key={i}
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredData.map((row, index) => (
+                    <tr
+                      key={index}
+                      className={`hover:bg-gray-50 transition-colors ${row.overallRegistrationStatus !== 'Accepted' ? 'bg-red-50/50' : ''}`}
+                    >
+                      {/* Column 1: Participant */}
+                      <td className="px-6 py-4 align-top">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-gray-900">
+                              {row.studentFullName ?? '-'}
+                            </span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${row.gender === 'Male' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}`}
+                              >
+                                {row.gender?.[0] ?? '-'}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {row.studentId}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col gap-1">
+                            <span className="inline-flex w-fit items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                              {row.studentGroup}
+                            </span>
+                            <span className="text-sm text-gray-700">
+                              {row.district}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1 mt-1">
                             {row.registeredEvents
                               .slice(0, 2)
                               .map((event, idx) => (
                                 <span
                                   key={idx}
-                                  className="text-xs bg-emerald-50 text-emerald-800 font-bold rounded px-2.5 py-1 border border-emerald-100 leading-none"
+                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800"
                                 >
                                   {event}
                                 </span>
                               ))}
                             {row.registeredEvents.length > 2 && (
-                              <span className="text-xs font-bold text-slate-400 shrink-0">
-                                +{row.registeredEvents.length - 2} more
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                +{row.registeredEvents.length - 2}
                               </span>
                             )}
                           </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Column 2: Logistics */}
-                    <td className="px-5 py-4 align-top border-r border-slate-50 min-w-[160px]">
-                      <div className="space-y-3">
-                        {['Arrival', 'Departure'].map((type) => (
-                          <div
-                            key={type}
-                            className="flex flex-col"
-                          >
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-black text-slate-400 uppercase tracking-tighter">
-                                {type}
+                      {/* Column 2: Logistics */}
+                      <td className="px-6 py-4 align-top">
+                        <div className="space-y-4">
+                          {['Arrival', 'Departure'].map((type) => (
+                            <div
+                              key={type}
+                              className="flex flex-col gap-1"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-medium text-gray-500 uppercase">
+                                  {type}
+                                </span>
+                                <span
+                                  className={`text-xs font-medium px-2 py-0.5 rounded ${row[`needs${type === 'Arrival' ? 'Pickup' : 'Drop'}`] === 'Yes' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-500'}`}
+                                >
+                                  {row[
+                                    `needs${type === 'Arrival' ? 'Pickup' : 'Drop'}`
+                                  ] === 'Yes'
+                                    ? type === 'Arrival'
+                                      ? 'Pickup'
+                                      : 'Drop'
+                                    : 'No'}
+                                </span>
+                              </div>
+                              <span className="text-sm font-medium text-gray-900">
+                                {row[`${type.toLowerCase()}Date`] ?? '-'}
                               </span>
-                              <span
-                                className={`text-xs font-bold px-2 py-0.5 rounded shrink-0 ${row[`needs${type === 'Arrival' ? 'Pickup' : 'Drop'}`] === 'Yes' ? 'bg-amber-100 text-amber-800' : 'text-slate-400'}`}
-                              >
-                                {row[
-                                  `needs${type === 'Arrival' ? 'Pickup' : 'Drop'}`
-                                ] === 'Yes'
-                                  ? type === 'Arrival'
-                                    ? 'Pickup'
-                                    : 'Drop'
-                                  : 'No'}
-                              </span>
+                              {row[`${type.toLowerCase()}Time`] && (
+                                <span className="text-xs text-gray-500">
+                                  {row[`${type.toLowerCase()}Time`]}
+                                </span>
+                              )}
                             </div>
-                            <p className="text-base font-black text-slate-900 leading-none">
-                              {row[`${type.toLowerCase()}Date`] ?? '-'}
-                            </p>
+                          ))}
+                        </div>
+                      </td>
+
+                      {/* Column 3: Stay & Accompany */}
+                      <td className="px-6 py-4 align-top">
+                        <div className="flex flex-col gap-3">
+                          <div className="flex flex-wrap gap-2">
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${row.needsAccommodation === 'Yes' || row.needsAccommodation === 'Own Accommodation' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
+                            >
+                              Stay:{' '}
+                              {row.needsAccommodation === 'Own Accommodation'
+                                ? 'Own'
+                                : row.needsAccommodation}
+                            </span>
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${row.needsReturnFoodPacket === 'Yes' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'}`}
+                            >
+                              Food: {row.needsReturnFoodPacket}
+                            </span>
                           </div>
+
+                          <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs font-medium text-gray-500 uppercase">
+                                Accompanying
+                              </span>
+                              {row.totalAccompanyingCount > 0 && (
+                                <span className="bg-gray-200 text-gray-700 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                  {row.totalAccompanyingCount}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-sm font-medium text-gray-900 mb-1">
+                              {row.accompanyingPersonName ?? 'None'}
+                            </div>
+                            {row.totalAccompanyingCount > 0 && (
+                              <div className="flex gap-2 text-xs text-gray-500">
+                                <span>
+                                  Male: {row.numMaleAccompanying ?? 0}
+                                </span>
+                                <span>
+                                  Female: {row.numFemaleAccompanying ?? 0}
+                                </span>
+                                <span>
+                                  Children:{' '}
+                                  {row.numNonParticipatingSiblings ?? 0} (
+                                  {row.numGirlAccompanyingKids ?? 0} girls,{' '}
+                                  {row.numBoyAccompanyingKids ?? 0} boys)
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Column 4: Contact & Remarks */}
+                      <td className="px-6 py-4 align-top">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-gray-900">
+                              {row.contactPhone ?? '-'}
+                            </span>
+                            <span className="text-xs text-blue-600 break-all">
+                              {row.contactEmail ?? '-'}
+                            </span>
+                          </div>
+
+                          {row.remarks && row.remarks.trim() && (
+                            <div className="mt-2 p-2 bg-yellow-50 rounded border border-yellow-100">
+                              <p className="text-xs text-yellow-800 italic line-clamp-3">
+                                "{row.remarks}"
+                              </p>
+                            </div>
+                          )}
+
+                          <div className="mt-1 text-xs text-gray-400">
+                            {row.samithiName}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile View */}
+          <div className="md:hidden space-y-4">
+            {filteredData.map((row, index) => {
+              const isExpanded = expandedCards.has(index);
+              return (
+                <div
+                  key={index}
+                  className={`bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden ${row.overallRegistrationStatus !== 'Accepted' ? 'bg-red-50/50' : ''}`}
+                >
+                  <button
+                    onClick={() => toggleCard(index)}
+                    className="w-full p-4 text-left flex justify-between items-start"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <span className="text-sm font-bold text-gray-900 line-clamp-1">
+                          {row.studentFullName}
+                        </span>
+                        <span
+                          className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${row.gender === 'Male' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}`}
+                        >
+                          {row.gender?.[0] ?? '-'}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-2">
+                        <span className="bg-gray-100 px-1.5 py-0.5 rounded">
+                          {row.studentId}
+                        </span>
+                        <span className="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded">
+                          {row.studentGroup}
+                        </span>
+                        <span>{row.district}</span>
+                      </div>
+                    </div>
+                    <svg
+                      className={`w-5 h-5 text-gray-400 shrink-0 ml-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="px-4 pb-4 space-y-4 border-t border-gray-100 pt-4">
+                      {/* Events */}
+                      <div className="flex flex-wrap gap-1">
+                        {row.registeredEvents.map((event, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800"
+                          >
+                            {event}
+                          </span>
                         ))}
                       </div>
-                    </td>
 
-                    {/* Column 3: Stay & Accompany */}
-                    <td className="px-5 py-4 align-top border-r border-slate-50 min-w-[240px]">
-                      <div className="flex flex-col gap-2.5">
-                        <div className="flex flex-wrap gap-2">
-                          <span
-                            className={`text-xs font-black px-2.5 py-1 rounded border leading-none shrink-0 ${row.needsAccommodation === 'Yes' || row.needsAccommodation === 'Own Accommodation' ? 'bg-green-600 text-white border-green-700' : 'bg-slate-100 text-slate-500 border-slate-200'}`}
-                          >
-                            STAY:{' '}
-                            {row.needsAccommodation === 'Own Accommodation'
-                              ? 'Own'
-                              : row.needsAccommodation}
-                          </span>
-                          <span
-                            className={`text-xs font-black px-2.5 py-1 rounded border leading-none shrink-0 ${row.needsReturnFoodPacket === 'Yes' ? 'bg-orange-500 text-white border-orange-600' : 'bg-slate-100 text-slate-500 border-slate-200'}`}
-                          >
-                            FOOD: {row.needsReturnFoodPacket}
-                          </span>
+                      {/* Logistics Grid */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-gray-50 p-3 rounded-xl">
+                          <p className="text-xs font-medium text-gray-500 uppercase mb-1">
+                            Arrival
+                          </p>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span
+                              className={`text-xs font-medium px-1.5 py-0.5 rounded ${row.needsPickup === 'Yes' ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-600'}`}
+                            >
+                              {row.needsPickup === 'Yes' ? 'Pickup' : 'No'}
+                            </span>
+                          </div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {row.arrivalDate}
+                          </p>
                         </div>
-                        <div className="bg-slate-50 p-2.5 rounded-xl border-2 border-slate-100 shadow-sm overflow-hidden">
-                          <div className="flex justify-between items-center mb-1.5">
-                            <p className="text-base font-black text-slate-900 uppercase truncate pr-2">
-                              {row.accompanyingPersonName ?? 'None'}
-                            </p>
-                            {row.totalAccompanyingCount > 0 && (
-                              <span className="bg-slate-800 text-white text-xs font-black px-2.5 py-1 rounded-full shrink-0">
-                                T:{row.totalAccompanyingCount}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex gap-3 text-sm font-bold uppercase tracking-tighter text-slate-500">
-                            Male:
-                            <span className="text-blue-700 shrink-0">
-                              {row.numMaleAccompanying ?? 0}
-                            </span>
-                            Female:
-                            <span className="text-pink-700 shrink-0">
-                              {row.numFemaleAccompanying ?? 0}
-                            </span>
-                            Children:
-                            <span className="text-purple-700 shrink-0">
-                              {row.numNonParticipatingSiblings ?? 0} (
-                              {row.numBoyAccompanyingKid} Boys +{' '}
-                              {row.numGirlAccompanyingKid} Girls)
+                        <div className="bg-gray-50 p-3 rounded-xl">
+                          <p className="text-xs font-medium text-gray-500 uppercase mb-1">
+                            Departure
+                          </p>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span
+                              className={`text-xs font-medium px-1.5 py-0.5 rounded ${row.needsDrop === 'Yes' ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-600'}`}
+                            >
+                              {row.needsDrop === 'Yes' ? 'Drop' : 'No'}
                             </span>
                           </div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {row.departureDate}
+                          </p>
                         </div>
                       </div>
-                    </td>
 
-                    {/* Column 4: Contact & Remarks */}
-                    <td className="px-5 py-4 align-top min-w-[240px]">
-                      <div className="space-y-2">
-                        <p className="font-mono font-bold text-slate-900 text-lg leading-none">
-                          {row.contactPhone ?? '-'}
+                      {/* Accompanying */}
+                      <div className="bg-gray-50 p-3 rounded-xl">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-medium text-gray-500 uppercase">
+                            Accompanying
+                          </span>
+                          <span className="bg-gray-200 text-gray-700 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                            {row.totalAccompanyingCount} Total
+                          </span>
+                        </div>
+                        <p className="text-sm font-medium text-gray-900 mb-1">
+                          {row.accompanyingPersonName || 'None'}
                         </p>
-                        <p className="font-bold text-blue-700 text-sm break-all leading-none">
-                          {row.contactEmail ?? '-'}
+                        <div className="flex gap-3 text-xs text-gray-500">
+                          <span>M: {row.numMaleAccompanying}</span>
+                          <span>F: {row.numFemaleAccompanying}</span>
+                          <span>C: {row.numNonParticipatingSiblings}</span>
+                        </div>
+                      </div>
+
+                      {/* Contact */}
+                      <div className="pt-2 border-t border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">
+                          {row.contactPhone}
+                        </p>
+                        <p className="text-xs text-blue-600 mb-2">
+                          {row.contactEmail}
                         </p>
                         {row.remarks && (
-                          <p className="mt-1.5 text-xs text-amber-950 font-bold leading-tight line-clamp-1 italic">
+                          <p className="text-xs text-gray-500 italic">
                             "{row.remarks}"
                           </p>
                         )}
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
-
-        {/* Compact Mobile View */}
-        <div className="md:hidden overflow-y-auto flex-1 p-4 bg-slate-100 space-y-4">
-          {filteredData.map((row, index) => {
-            const totalAccompanyingCount =
-              (parseInt(row.numMaleAccompanying) || 0) +
-              (parseInt(row.numFemaleAccompanying) || 0) +
-              (parseInt(row.numNonParticipatingSiblings) || 0);
-            const isExpanded = expandedCards.has(index);
-            return (
-              <div
-                key={index}
-                className={`bg-white rounded-3xl shadow-md border border-slate-200 overflow-hidden transition-all ${row.overallRegistrationStatus === 'Accepted' ? '' : 'bg-red-50/30'}`}
-              >
-                {/* Clickable Header */}
-                <button
-                  onClick={() => toggleCard(index)}
-                  className="w-full p-5 text-left flex justify-between items-start hover:bg-slate-50 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-2 mb-2">
-                      <p className="font-black text-slate-900 text-lg uppercase leading-tight flex-1">
-                        {row.studentFullName}
-                      </p>
-                      <div className="flex gap-2 shrink-0">
-                        <span
-                          className={`px-2.5 py-1 rounded-md text-xs font-black uppercase ${row.gender === 'Male' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}`}
-                        >
-                          {row.gender?.[0] ?? '-'}
-                        </span>
-                        <span className="text-[11px] font-black bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg leading-none">
-                          {row.studentGroup}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex gap-3 text-xs font-bold text-slate-500">
-                      <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
-                        {row.studentId}
-                      </span>
-                      <span className="text-slate-500">{row.district}</span>
-                    </div>
-                  </div>
-                  <svg
-                    className={`w-6 h-6 text-slate-400 shrink-0 ml-2 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                {/* Expanded Content */}
-                {isExpanded && (
-                  <div className="px-5 pb-5 space-y-3 border-t border-slate-100 pt-3">
-                    {/* Events */}
-                    {row.registeredEvents &&
-                      row.registeredEvents.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {row.registeredEvents.map((event, idx) => (
-                            <span
-                              key={idx}
-                              className="text-xs bg-emerald-50 text-emerald-800 font-bold rounded px-2.5 py-1 border border-emerald-100 leading-none"
-                            >
-                              {event}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                    {/* Logistics */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-slate-50 p-3 rounded-2xl">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="font-black uppercase text-slate-400 text-[10px] tracking-wider">
-                            Arrival
-                          </p>
-                          <span
-                            className={`text-xs font-bold px-2 py-0.5 rounded shrink-0 ${row.needsPickup === 'Yes' ? 'bg-amber-100 text-amber-800' : 'text-slate-400'}`}
-                          >
-                            {row.needsPickup === 'Yes' ? 'Pickup' : 'No'}
-                          </span>
-                        </div>
-                        <p className="font-bold text-slate-800 text-sm">
-                          {row.arrivalDate ?? '-'}
-                        </p>
-                        {row.arrivalTime && (
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            {row.arrivalTime}
-                          </p>
-                        )}
-                      </div>
-                      <div className="bg-slate-50 p-3 rounded-2xl">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="font-black uppercase text-slate-400 text-[10px] tracking-wider">
-                            Departure
-                          </p>
-                          <span
-                            className={`text-xs font-bold px-2 py-0.5 rounded shrink-0 ${row.needsDrop === 'Yes' ? 'bg-amber-100 text-amber-800' : 'text-slate-400'}`}
-                          >
-                            {row.needsDrop === 'Yes' ? 'Drop' : 'No'}
-                          </span>
-                        </div>
-                        <p className="font-bold text-slate-800 text-sm">
-                          {row.departureDate ?? '-'}
-                        </p>
-                        {row.departureTime && (
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            {row.departureTime}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Stay & Food */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-slate-50 p-3 rounded-2xl">
-                        <p className="font-black uppercase text-slate-400 text-[10px] mb-1 tracking-wider">
-                          Stay
-                        </p>
-                        <span
-                          className={`text-xs font-black px-2.5 py-1 rounded border leading-none ${row.needsAccommodation === 'Yes' || row.needsAccommodation === 'Own Accommodation' ? 'bg-green-600 text-white border-green-700' : 'bg-slate-100 text-slate-500 border-slate-200'}`}
-                        >
-                          {row.needsAccommodation === 'Own Accommodation'
-                            ? 'Own'
-                            : row.needsAccommodation}
-                        </span>
-                      </div>
-                      <div className="bg-slate-50 p-3 rounded-2xl">
-                        <p className="font-black uppercase text-slate-400 text-[10px] mb-1 tracking-wider">
-                          Food
-                        </p>
-                        <span
-                          className={`text-xs font-black px-2.5 py-1 rounded border leading-none ${row.needsReturnFoodPacket === 'Yes' ? 'bg-orange-500 text-white border-orange-600' : 'bg-slate-100 text-slate-500 border-slate-200'}`}
-                        >
-                          {row.needsReturnFoodPacket}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Accompanying */}
-                    {totalAccompanyingCount > 0 && (
-                      <div className="bg-slate-50 p-3 rounded-2xl border-2 border-slate-100">
-                        <div className="flex justify-between items-center mb-1.5">
-                          <p className="text-sm font-black text-slate-900 uppercase truncate pr-2">
-                            {row.accompanyingPersonName ?? 'None'}
-                          </p>
-                          <span className="bg-slate-800 text-white text-xs font-black px-2.5 py-1 rounded-full shrink-0">
-                            T:{totalAccompanyingCount}
-                          </span>
-                        </div>
-                        <div className="flex gap-3 text-xs font-bold uppercase tracking-tighter">
-                          <span className="text-blue-700 shrink-0">
-                            M:{row.numMaleAccompanying ?? 0}
-                          </span>
-                          <span className="text-pink-700 shrink-0">
-                            F:{row.numFemaleAccompanying ?? 0}
-                          </span>
-                          {row.numNonParticipatingSiblings > 0 && (
-                            <span className="text-purple-700 shrink-0">
-                              C:{row.numNonParticipatingSiblings}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Contact */}
-                    <div className="pt-2 border-t border-slate-100 space-y-2">
-                      <p className="font-mono font-bold text-slate-900 text-sm">
-                        {row.contactPhone ?? '-'}
-                      </p>
-                      {row.contactEmail && (
-                        <p className="font-bold text-blue-700 text-xs break-all">
-                          {row.contactEmail}
-                        </p>
-                      )}
-                      {row.remarks && row.remarks.trim() && (
-                        <p className="text-xs text-amber-950 font-bold leading-tight italic mt-1">
-                          "{row.remarks}"
-                        </p>
-                      )}
-                      <p className="text-xs text-slate-500 font-medium italic">
-                        {row.district} • {row.samithiName}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
       </div>
-    </div>
+    </>
   ) : (
-    <div className="flex h-screen items-center justify-center">
-      <p className="text-2xl font-semibold text-slate-400 animate-pulse">
-        Loading Dashboard...
-      </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p className="text-gray-500 font-medium">Loading Dashboard...</p>
+      </div>
     </div>
   );
 }
