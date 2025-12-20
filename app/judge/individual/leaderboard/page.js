@@ -59,7 +59,7 @@ export default function EventLeaderboardIndiPage() {
                 participant.judgeWiseTotal[judgeId] = 0;
               }
 
-              participant.judgeWiseTotal[judgeId] += parseInt(
+              participant.judgeWiseTotal[judgeId] += parseFloat(
                 participant.score[_eventName][judgeId][criteria],
               );
             });
@@ -195,7 +195,7 @@ export default function EventLeaderboardIndiPage() {
                   <tr key={index}>
                     <td
                       className={
-                        'px-4 py-2 border max-w-[160px]' +
+                        'px-4 py-2 border max-w-40' +
                         (row.substitute && row.substitute[eventMetadata.name]
                           ? ' bg-[#ffcece]'
                           : '')

@@ -295,46 +295,63 @@ export default function JudgeGroupPage() {
                             <div className="flex flex-row items-center justify-end gap-1 w-full">
                               <input
                                 type="number"
-                                className="border p-2 rounded-lg text-md w-[72px] border-slate-300"
+                                step="0.01"
+                                className="border p-2 rounded-lg text-md w-18 border-slate-300"
                                 max={eventMetadata.evalCriteria[key]}
                                 min={0}
                                 value={val}
                                 onChange={(e) => {
-                                  if (e.target.value < 0) {
-                                    e.target.value = 0;
-                                  } else if (
-                                    e.target.value >
-                                    eventMetadata.evalCriteria[key]
-                                  ) {
-                                    e.target.value =
-                                      eventMetadata.evalCriteria[key];
+                                  let value = e.target.value;
+
+                                  // Block input if more than 2 decimal places
+                                  if (value.includes('.')) {
+                                    const parts = value.split('.');
+                                    if (parts[1]?.length > 2) {
+                                      return;
+                                    }
                                   }
+
+                                  // Apply min/max constraints
+                                  if (value !== '') {
+                                    const numValue = parseFloat(value);
+                                    if (numValue < 0) {
+                                      value = '0';
+                                    } else if (
+                                      numValue > eventMetadata.evalCriteria[key]
+                                    ) {
+                                      value =
+                                        eventMetadata.evalCriteria[
+                                          key
+                                        ].toString();
+                                    }
+                                  }
+
                                   const newBuffer = [...scoreBuffer];
-                                  newBuffer[index][1] = e.target.value;
+                                  newBuffer[index][1] = value;
                                   setScoreBuffer(newBuffer);
                                 }}
                               />
-                              <span className="text-md w-[32px] text-right">
+                              <span className="text-md w-8 text-right">
                                 {' '}
                                 / {eventMetadata.evalCriteria[key]}
                               </span>
                             </div>
                           </div>
                         ))}
-
                         <hr className="border-dashed mt-2" />
                         <div className="flex flex-row justify-between align-middle">
                           <label className="text-sm">Total</label>
                           <div className="flex flex-row items-center justify-end gap-1 w-full">
-                            <p className="text-md font-semibold w-[72px] text-right">
-                              {scoreBuffer.reduce(
-                                (a, b) =>
-                                  (a == '' ? 0 : a) +
-                                  parseInt(b[1] == '' ? 0 : b[1]),
-                                0,
-                              )}
+                            <p className="text-md font-semibold w-18 text-right">
+                              {scoreBuffer
+                                .reduce(
+                                  (a, b) =>
+                                    a + parseFloat(b[1] === '' ? 0 : b[1]),
+                                  0,
+                                )
+                                .toFixed(2)}
                             </p>
-                            <span className="text-md w-[32px] text-right">
+                            <span className="text-md w-8 text-right">
                               {' '}
                               /{' '}
                               {Object.values(eventMetadata.evalCriteria).reduce(
@@ -521,10 +538,10 @@ export default function JudgeGroupPage() {
                         >
                           <label className="text-sm">{key}</label>
                           <div className="flex flex-row items-center justify-end gap-1 w-full">
-                            <p className="text-md font-semibold w-[72px] text-right">
+                            <p className="text-md font-semibold w-18 text-right">
                               {val}
                             </p>
-                            <span className="text-md w-[32px] text-right">
+                            <span className="text-md w-8 text-right">
                               {' '}
                               / {eventMetadata.evalCriteria[key]}
                             </span>
@@ -535,12 +552,12 @@ export default function JudgeGroupPage() {
                       <div className="flex flex-row justify-between items-center">
                         <label className="text-sm">Total</label>
                         <div className="flex flex-row items-center justify-end gap-1 w-full">
-                          <p className="text-md font-semibold w-[72px] text-right">
+                          <p className="text-md font-semibold w-18 text-right">
                             {Object.values(
                               val[0].score[eventMetadata.name][user.id],
-                            ).reduce((a, b) => a + parseInt(b), 0)}
+                            ).reduce((a, b) => a + parseFloat(b), 0)}
                           </p>
-                          <span className="text-md w-[32px] text-right">
+                          <span className="text-md w-8 text-right">
                             {' '}
                             /{' '}
                             {Object.values(eventMetadata.evalCriteria).reduce(

@@ -77,7 +77,7 @@ export default function GroupEventLeaderboardPage() {
                 group.judgeWiseTotal[judgeId] = 0;
               }
 
-              group.judgeWiseTotal[judgeId] += parseInt(
+              group.judgeWiseTotal[judgeId] += parseFloat(
                 group.score[_eventName][judgeId][criteria],
               );
             });
