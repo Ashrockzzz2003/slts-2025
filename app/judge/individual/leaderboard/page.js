@@ -251,12 +251,12 @@ export default function EventLeaderboardIndiPage() {
                           key={index}
                           className="text-xs"
                         >
-                          {total}
+                          {parseFloat(total).toFixed(2)}
                         </p>
                       ))}
                     </td>
                     <td className="px-4 py-2 border font-bold">
-                      {row.overallTotal}
+                      {parseFloat(row.overallTotal).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 border">
                       <div className="flex flex-col">

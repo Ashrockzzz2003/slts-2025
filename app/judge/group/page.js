@@ -555,7 +555,9 @@ export default function JudgeGroupPage() {
                           <p className="text-md font-semibold w-18 text-right">
                             {Object.values(
                               val[0].score[eventMetadata.name][user.id],
-                            ).reduce((a, b) => a + parseFloat(b), 0)}
+                            )
+                              .reduce((a, b) => a + parseFloat(b), 0)
+                              .toFixed(2)}
                           </p>
                           <span className="text-md w-8 text-right">
                             {' '}

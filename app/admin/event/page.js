@@ -144,7 +144,7 @@ export default function ManageEvents() {
                   key={index}
                   className="bg-white hover:bg-blue-50 text-bold transition duration-200"
                 >
-                  <td className="border px-4 py-2 max-w-[240px]">
+                  <td className="border px-4 py-2 max-w-60">
                     <div>
                       <p className="font-bold">{event.name}</p>
                     </div>
