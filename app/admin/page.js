@@ -708,12 +708,25 @@ export default function AdminDashboard() {
 
                       {/* Contact */}
                       <div className="pt-2 border-t border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">
-                          {row.contactPhone}
+                        {row.accompanyingPersonContact && (
+                          <p className="text-sm font-medium text-gray-900">
+                            {row.accompanyingPersonContact ?? '-'} (
+                            {row.accompanyingPersonRelation ?? '-'})
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500 mb-1">
+                          (student/guru/parent/guardian)
                         </p>
-                        <p className="text-xs text-blue-600 mb-2">
-                          {row.contactEmail}
-                        </p>
+                        {row.contactEmail && (
+                          <p className="text-xs text-blue-600 mb-1">
+                            {row.contactEmail}
+                          </p>
+                        )}
+                        {row.contactPhone && (
+                          <p className="text-xs text-blue-600 mb-2">
+                            {row.contactPhone}
+                          </p>
+                        )}
                         {row.remarks && (
                           <p className="text-xs text-gray-500 italic">
                             "{row.remarks}"
