@@ -259,13 +259,13 @@ export default function AdminDashboard() {
                       Children (
                       {filteredData.reduce(
                         (acc, row) =>
-                          acc + (parseInt(row.numGirlAccompanyingKids) || 0),
+                          acc + (parseInt(row.numGirlAccompanyingKid) || 0),
                         0,
                       )}{' '}
                       girls,{' '}
                       {filteredData.reduce(
                         (acc, row) =>
-                          acc + (parseInt(row.numBoyAccompanyingKids) || 0),
+                          acc + (parseInt(row.numBoyAccompanyingKid) || 0),
                         0,
                       )}{' '}
                       boys)
@@ -524,8 +524,8 @@ export default function AdminDashboard() {
                                 <span>
                                   Children:{' '}
                                   {row.numNonParticipatingSiblings ?? 0} (
-                                  {row.numGirlAccompanyingKids ?? 0} girls,{' '}
-                                  {row.numBoyAccompanyingKids ?? 0} boys)
+                                  {row.numGirlAccompanyingKid ?? 0} girls,{' '}
+                                  {row.numBoyAccompanyingKid ?? 0} boys)
                                 </span>
                               </div>
                             )}
