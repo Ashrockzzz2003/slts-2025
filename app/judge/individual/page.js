@@ -577,10 +577,10 @@ export default function JudgePage() {
 
                                   // Block more than 2 decimal places
                                   if (value.includes('.')) {
-                                    const parts = value.split('.');
-                                    if (parts[1]?.length > 2) {
-                                      return;
-                                    }
+                                    const [intPart, decimalPart] =
+                                      value.split('.');
+                                    value =
+                                      intPart + '.' + decimalPart.slice(0, 2);
                                   }
 
                                   // Apply constraints
