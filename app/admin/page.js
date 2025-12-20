@@ -512,6 +512,11 @@ export default function AdminDashboard() {
                             </div>
                             <div className="text-sm font-medium text-gray-900 mb-1">
                               {row.accompanyingPersonName ?? 'None'}
+                              {row.accompanyingPersonRelation && (
+                                <span className="text-gray-500 font-normal ml-1">
+                                  ({row.accompanyingPersonRelation})
+                                </span>
+                              )}
                             </div>
                             {row.totalAccompanyingCount > 0 && (
                               <div className="flex gap-2 text-xs text-gray-500">
@@ -537,12 +542,26 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 align-top">
                         <div className="flex flex-col gap-2">
                           <div className="flex flex-col">
-                            <span className="text-sm font-medium text-gray-900">
-                              {row.contactPhone ?? '-'}
+                            {row.accompanyingPersonContact && (
+                              <span className="text-sm font-medium text-gray-900">
+                                {row.accompanyingPersonContact ?? '-'} (
+                                {row.accompanyingPersonRelation ?? '-'})
+                              </span>
+                            )}
+                            <br />
+                            <span className="text-xs text-gray-500">
+                              (student/guru/parent/guardian)
                             </span>
-                            <span className="text-xs text-blue-600 break-all">
-                              {row.contactEmail ?? '-'}
-                            </span>
+                            {row.contactEmail && (
+                              <span className="text-xs text-blue-600 break-all">
+                                {row.contactEmail ?? '-'}
+                              </span>
+                            )}
+                            {row.contactPhone && (
+                              <span className="text-xs text-blue-600 break-all">
+                                {row.contactPhone ?? '-'}
+                              </span>
+                            )}
                           </div>
 
                           {row.remarks && row.remarks.trim() && (
@@ -674,6 +693,11 @@ export default function AdminDashboard() {
                         </div>
                         <p className="text-sm font-medium text-gray-900 mb-1">
                           {row.accompanyingPersonName || 'None'}
+                          {row.accompanyingPersonRelation && (
+                            <span className="text-gray-500 font-normal ml-1">
+                              ({row.accompanyingPersonRelation})
+                            </span>
+                          )}
                         </p>
                         <div className="flex gap-3 text-xs text-gray-500">
                           <span>M: {row.numMaleAccompanying}</span>
