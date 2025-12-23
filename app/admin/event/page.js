@@ -27,6 +27,7 @@ export default function ManageEvents() {
   const [criteriaBuffer, setCriteriaBuffer] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [copiedJudge, setCopiedJudge] = useState(null);
 
   useEffect(() => {
     if (!secureLocalStorage.getItem('user')) {
@@ -64,190 +65,312 @@ export default function ManageEvents() {
 
   return !isLoading && user && filteredData ? (
     <>
-      <div className={'flex flex-col justify-center w-screen ml-auto mr-auto'}>
-        <div className="rounded-2xl p-4 m-4 bg-white border overflow-x-auto justify-between flex flex-row">
-          <div>
-            <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
-            <p className="text-gray-700">{user.email}</p>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Welcome, {user.name}
+              </h1>
+              <p className="text-gray-500">{user.email}</p>
+            </div>
+            <div className="flex gap-3 w-full md:w-auto">
+              <button
+                className="flex-1 md:flex-none bg-yellow-100 text-yellow-800 hover:bg-yellow-200 font-semibold px-4 py-2 rounded-xl transition-colors"
+                onClick={() => router.push('/admin')}
+              >
+                Dashboard
+              </button>
+              <button
+                className="flex-1 md:flex-none bg-red-100 text-red-800 hover:bg-red-200 font-semibold px-4 py-2 rounded-xl transition-colors"
+                onClick={() => {
+                  auth.signOut();
+                  secureLocalStorage.clear();
+                  router.push('/');
+                }}
+              >
+                Logout
+              </button>
+            </div>
           </div>
-          <div className="flex flex-row">
-            <button
-              className="bg-[#fffece] text-[#2c350b] font-bold px-4 py-1 rounded-xl mr-2"
-              onClick={() => router.push('/admin')}
-            >
-              Dashboard
-            </button>
-            <button
-              className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
-              onClick={() => {
-                auth.signOut();
-                secureLocalStorage.clear();
-                router.push('/');
-              }}
-            >
-              Logout
-            </button>
-          </div>
-        </div>
 
-        <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
-          <div className="bg-white p-4 rounded-2xl border">
-            <div className="flex flex-col gap-4">
-              <div>
+          {/* Filters Section */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <label
+                  htmlFor="search"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Search Events
+                </label>
                 <input
                   id="search"
-                  className="border p-2 rounded-2xl w-full"
-                  placeholder="Search by event name"
+                  className="w-full border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                  placeholder="Search by event name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-
-              <div className="flex flex-row flex-wrap gap-4 justify-center items-center">
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="group">Group</label>
-                  <select
-                    id="group"
-                    className="border p-2 rounded-2xl"
-                    value={filterGroup}
-                    onChange={(e) => setFilterGroup(e.target.value)}
-                  >
-                    <option value="">All</option>
-                    {groups.map((group, index) => (
-                      <option
-                        key={index}
-                        value={group}
-                      >
-                        {group}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div className="w-full md:w-64">
+                <label
+                  htmlFor="group"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Filter by Group
+                </label>
+                <select
+                  id="group"
+                  className="w-full border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                  value={filterGroup}
+                  onChange={(e) => setFilterGroup(e.target.value)}
+                >
+                  <option value="">All Groups</option>
+                  {groups.map((group, index) => (
+                    <option
+                      key={index}
+                      value={group}
+                    >
+                      {group}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex flex-row flex-wrap gap-4 m-4 justify-center overflow-x-auto">
-          <table className="table-auto w-full mt-6 border-collapse">
-            <thead>
-              <tr className="bg-black text-white">
-                <th className="border px-4 py-2">Event Name</th>
-                <th className="border px-4 py-2">Judges</th>
-                <th className="border px-4 py-2">Criteria</th>
-                <th className="border px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((event, index) => (
-                <tr
-                  key={index}
-                  className="bg-white hover:bg-blue-50 text-bold transition duration-200"
-                >
-                  <td className="border px-4 py-2 max-w-60">
-                    <div>
-                      <p className="font-bold">{event.name}</p>
-                    </div>
-                    <div className="flex flex-row flex-wrap gap-1">
-                      {event.group.map((group, index) => (
-                        <p
-                          key={index}
-                          className="bg-gray-200 text-gray-800 font-semibold px-2 py-1 rounded-xl w-fit"
-                        >
-                          {group}
-                        </p>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <div className="flex flex-col flex-wrap gap-1 w-fit">
-                      {event.judgeEmailList.map((judge, index) => (
-                        <p
-                          className="bg-[#f6e7ff] text-[#220b35] px-2 py-1 rounded-2xl font-semibold"
-                          key={index}
-                        >
-                          {judge}
-                        </p>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <table className="table-auto">
-                      <thead>
-                        <tr>
-                          <th className="border px-4 py-2">Criteria</th>
-                          <th className="border px-4 py-2">Marks</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Object.keys(event.evalCriteria).map((key, index) => (
-                          <tr key={index}>
-                            <td className="border px-4 py-2">{key}</td>
-                            <td className="border px-4 py-2">
-                              {event.evalCriteria[key]}
-                            </td>
-                          </tr>
-                        ))}
-                        <tr>
-                          <td className="border px-4 py-2 font-bold">Total</td>
-                          <td className="border px-4 py-2 font-bold">
-                            {Object.values(event.evalCriteria).reduce(
-                              (a, b) => a + b,
-                              0,
+          {/* Content Section */}
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Event Details
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Judges
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Criteria Summary
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredData.length > 0 ? (
+                    filteredData.map((event, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            <span className="text-sm font-bold text-gray-900">
+                              {event.name}
+                            </span>
+                            <div className="flex flex-wrap gap-1">
+                              {event.group.map((group, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                >
+                                  {group}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            {event.judgeEmailList.map((judge, idx) => {
+                              const password = judge
+                                .toString()
+                                .replace('@slts.cbe', '@23111926');
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs"
+                                >
+                                  <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-lg font-medium">
+                                    {judge}
+                                  </span>
+                                  <div className="flex items-center gap-1">
+                                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-lg font-mono">
+                                      {password}
+                                    </span>
+                                    <button
+                                      className="p-1 hover:bg-gray-100 rounded-full transition-colors text-gray-500 hover:text-gray-700"
+                                      title="Copy credentials"
+                                      onClick={() => {
+                                        const message = `Email: ${judge}\nPassword: ${password}`;
+                                        navigator.clipboard.writeText(message);
+                                        setCopiedJudge(judge);
+                                        setTimeout(
+                                          () => setCopiedJudge(null),
+                                          2000,
+                                        );
+                                      }}
+                                    >
+                                      {copiedJudge === judge ? (
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          className="h-4 w-4 text-green-600"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M5 13l4 4L19 7"
+                                          />
+                                        </svg>
+                                      ) : (
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          className="h-4 w-4"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                          />
+                                        </svg>
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            {Object.entries(event.evalCriteria).length > 0 ? (
+                              <div className="text-sm">
+                                <div className="space-y-1">
+                                  {Object.entries(event.evalCriteria).map(
+                                    ([criteria, marks], cIdx) => (
+                                      <div
+                                        key={cIdx}
+                                        className="flex justify-between items-center text-gray-600 border-b border-gray-100 last:border-0 pb-1 last:pb-0"
+                                      >
+                                        <span className="font-medium pr-4">
+                                          {criteria}
+                                        </span>
+                                        <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap">
+                                          {marks} pts
+                                        </span>
+                                      </div>
+                                    ),
+                                  )}
+                                </div>
+                                <div className="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center font-bold text-gray-900">
+                                  <span>Total</span>
+                                  <span>
+                                    {Object.values(event.evalCriteria).reduce(
+                                      (a, b) => a + b,
+                                      0,
+                                    )}{' '}
+                                    pts
+                                  </span>
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-sm text-gray-400 italic">
+                                No criteria set
+                              </span>
                             )}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <div className="flex flex-col gap-2">
-                      <button
-                        className="bg-[#cefdff] text-[#0b0d35] font-bold px-4 py-1 rounded-xl"
-                        onClick={() => {
-                          setEventNameBuffer(event.name);
-                          setCriteriaBuffer(Object.entries(event.evalCriteria));
-                          setCIsOpen(true);
-                        }}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            <button
+                              className="bg-cyan-100 text-cyan-900 hover:bg-cyan-200 font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors w-full sm:w-auto text-center"
+                              onClick={() => {
+                                setEventNameBuffer(event.name);
+                                setCriteriaBuffer(
+                                  Object.entries(event.evalCriteria),
+                                );
+                                setCIsOpen(true);
+                              }}
+                            >
+                              Update Criteria
+                            </button>
+                            <a
+                              className="bg-lime-100 text-lime-900 hover:bg-lime-200 font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors w-full sm:w-auto text-center block"
+                              href={`/admin/event/${event.name.includes('GROUP') ? 'group' : 'individual'}?event=${encodeURIComponent(event.name)}`}
+                            >
+                              Leaderboard
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="px-6 py-8 text-center text-gray-500"
                       >
-                        Update Criteria
-                      </button>
-                      <a
-                        className="bg-[#f7ffce] text-[#2c350b] font-bold px-4 py-1 rounded-xl text-center decoration-none"
-                        href={`/admin/event/${event.name.includes('GROUP') ? 'group' : 'individual'}?event=${encodeURIComponent(event.name)}`}
-                      >
-                        View Leaderboard
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                        No events found matching your search.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
       <Dialog
         open={cIsOpen}
         onClose={() => setCIsOpen(false)}
-        className="relative z-50 shadow-2xl"
+        className="relative z-50"
       >
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 backdrop-blur-sm">
-          <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-            <div className="flex flex-row justify-between">
-              <DialogTitle className="text-lg font-medium leading-6 text-gray-900">
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+          aria-hidden="true"
+        />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <DialogPanel className="mx-auto max-w-2xl w-full rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-200 flex flex-row justify-between items-center bg-gray-50">
+              <DialogTitle className="text-lg font-bold text-gray-900">
                 Update Judging Criteria
               </DialogTitle>
               <button
                 onClick={() => setCIsOpen(false)}
-                className="bg-gray-200 p-2 rounded-full"
+                className="text-gray-400 hover:text-gray-500 hover:bg-gray-100 p-2 rounded-full transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="black"
+                  stroke="currentColor"
                 >
                   <path
                     strokeLinecap="round"
@@ -259,92 +382,134 @@ export default function ManageEvents() {
               </button>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <Description term="Event Name">
-                {filteredData[0].name}
-              </Description>
-              {/* Dynamic criteria as list of (key, value) pair */}
-              <table className="table-auto">
-                <thead>
-                  <tr>
-                    <th className="border px-4 py-2">Criteria</th>
-                    <th className="border px-4 py-2">Marks</th>
-                    <th className="border px-4 py-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {criteriaBuffer.map((_, index) => (
-                    <tr key={index}>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          className="border p-2 rounded-2xl w-full"
-                          value={criteriaBuffer[index][0]}
-                          onChange={(e) => {
-                            const _criteriaBuffer = [...criteriaBuffer];
-                            _criteriaBuffer[index][0] = e.target.value;
-                            setCriteriaBuffer(_criteriaBuffer);
-                          }}
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="number"
-                          className="border p-2 rounded-2xl w-full"
-                          value={criteriaBuffer[index][1] ?? 0}
-                          onChange={(e) => {
-                            const _criteriaBuffer = [...criteriaBuffer];
-                            _criteriaBuffer[index][1] =
-                              e.target.value.toString();
-                            setCriteriaBuffer(_criteriaBuffer);
-                          }}
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <button
-                          className="bg-[#ffcece] text-[#350b0b] font-bold px-4 py-1 rounded-xl"
-                          onClick={() => {
-                            const _criteriaBuffer = [...criteriaBuffer];
-                            _criteriaBuffer.splice(index, 1);
-                            setCriteriaBuffer(_criteriaBuffer);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  <tr>
-                    {/* total */}
-                    <td className="border px-4 py-2 font-bold">Total</td>
-                    <td className="border px-4 py-2 font-bold">
-                      {criteriaBuffer
-                        .map((c) => c[1])
-                        .reduce((a, b) => a + parseInt(b), 0)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="p-6 overflow-y-auto flex-1">
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  Event Name
+                </h3>
+                <p className="text-lg font-bold text-gray-900">
+                  {eventNameBuffer}
+                </p>
+              </div>
 
-              <div className="flex flex-row gap-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  <div className="col-span-7">Criteria Name</div>
+                  <div className="col-span-3">Marks</div>
+                  <div className="col-span-2 text-center">Action</div>
+                </div>
+
+                {criteriaBuffer.map((_, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-12 gap-4 items-center"
+                  >
+                    <div className="col-span-7">
+                      <input
+                        type="text"
+                        className="w-full border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 border text-sm"
+                        placeholder="Criteria description"
+                        value={criteriaBuffer[index][0]}
+                        onChange={(e) => {
+                          const _criteriaBuffer = [...criteriaBuffer];
+                          _criteriaBuffer[index][0] = e.target.value;
+                          setCriteriaBuffer(_criteriaBuffer);
+                        }}
+                      />
+                    </div>
+                    <div className="col-span-3">
+                      <input
+                        type="number"
+                        className="w-full border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 border text-sm"
+                        placeholder="0"
+                        value={criteriaBuffer[index][1] ?? 0}
+                        onChange={(e) => {
+                          const _criteriaBuffer = [...criteriaBuffer];
+                          _criteriaBuffer[index][1] = e.target.value.toString();
+                          setCriteriaBuffer(_criteriaBuffer);
+                        }}
+                      />
+                    </div>
+                    <div className="col-span-2 flex justify-center">
+                      <button
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded-full transition-colors"
+                        title="Remove criteria"
+                        onClick={() => {
+                          const _criteriaBuffer = [...criteriaBuffer];
+                          _criteriaBuffer.splice(index, 1);
+                          setCriteriaBuffer(_criteriaBuffer);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 flex justify-between items-center pt-4 border-t border-gray-100">
+                <div className="text-sm font-medium text-gray-700">
+                  Total Marks:{' '}
+                  <span className="text-lg font-bold text-gray-900 ml-2">
+                    {criteriaBuffer
+                      .map((c) => c[1])
+                      .reduce((a, b) => a + parseInt(b || 0), 0)}
+                  </span>
+                </div>
                 <button
-                  className="bg-[#f6ffce] text-[#30350b] font-bold px-4 py-1 rounded-xl"
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium text-sm hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors"
                   onClick={() => {
                     setCriteriaBuffer([...criteriaBuffer, ['', 0]]);
                   }}
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
                   Add Criteria
                 </button>
               </div>
+            </div>
 
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
               <button
-                className="bg-[#d3ffce] text-[#0b3511] font-bold px-4 py-1 rounded-xl"
+                className="px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-200 transition-colors"
+                onClick={() => setCIsOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors shadow-sm"
                 onClick={() => {
                   setIsLoading(true);
-
                   const _criteria = {};
                   criteriaBuffer.forEach((c) => {
-                    _criteria[c[0]] = c[1];
+                    if (c[0].trim()) {
+                      _criteria[c[0]] = c[1];
+                    }
                   });
 
                   updateCrieria(eventNameBuffer, _criteria).then((res) => {
@@ -355,7 +520,7 @@ export default function ManageEvents() {
                   });
                 }}
               >
-                Update Criteria
+                Save Changes
               </button>
             </div>
           </DialogPanel>
@@ -363,8 +528,11 @@ export default function ManageEvents() {
       </Dialog>
     </>
   ) : (
-    <div className="flex h-screen items-center justify-center">
-      <p className="text-xl font-semibold">Loading...</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p className="text-gray-500 font-medium">Loading event data...</p>
+      </div>
     </div>
   );
 }

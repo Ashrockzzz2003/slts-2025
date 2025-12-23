@@ -391,6 +391,21 @@ export default function JudgePage() {
                           event
                           {participant.registeredEvents.length > 1 ? 's' : ''}.
                         </p>
+
+                        {/* Other registered events (excluding current) */}
+                        {participant.registeredEvents.filter(
+                          (ev) => ev !== eventMetadata.name,
+                        ).length > 0 && (
+                          <p className="text-sm mb-3">
+                            Also participating in{' '}
+                            <span className="font-bold">
+                              {participant.registeredEvents
+                                .filter((ev) => ev !== eventMetadata.name)
+                                .join(', ')}
+                            </span>
+                          </p>
+                        )}
+
                         {participant.registeredEvents.some((x) =>
                           x.includes('GROUP'),
                         ) && (
