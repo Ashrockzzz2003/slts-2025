@@ -205,9 +205,9 @@ export default function JudgeGroupPage() {
                               {participant.registeredEvents.filter(
                                 (ev) => ev !== eventMetadata.name,
                               ).length > 0 && (
-                                <p className="text-sm mb-3">
+                                <p className="text-sm mb-3 text-gray-600">
                                   Also participating in{' '}
-                                  <span className="font-bold">
+                                  <span className="px-2 py-0.5 rounded-full bg-violet-50 font-semibold text-violet-700 border-2 border-violet-300 text-xs">
                                     {participant.registeredEvents
                                       .filter((ev) => ev !== eventMetadata.name)
                                       .join(', ')}

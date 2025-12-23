@@ -396,14 +396,21 @@ export default function JudgePage() {
                         {participant.registeredEvents.filter(
                           (ev) => ev !== eventMetadata.name,
                         ).length > 0 && (
-                          <p className="text-sm mb-3">
-                            Also participating in{' '}
-                            <span className="font-bold">
+                          <div className="text-sm mb-3 text-gray-600">
+                            <span className="mr-1">Also participating in</span>
+                            <span className="inline-flex flex-wrap gap-1">
                               {participant.registeredEvents
                                 .filter((ev) => ev !== eventMetadata.name)
-                                .join(', ')}
+                                .map((ev, i) => (
+                                  <span
+                                    key={i}
+                                    className="px-2 py-0.5 rounded-full bg-violet-50 font-semibold text-violet-700 border-2 border-violet-300 text-xs"
+                                  >
+                                    {ev}
+                                  </span>
+                                ))}
                             </span>
-                          </p>
+                          </div>
                         )}
 
                         {participant.registeredEvents.some((x) =>
