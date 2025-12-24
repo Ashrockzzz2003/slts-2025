@@ -391,6 +391,28 @@ export default function JudgePage() {
                           event
                           {participant.registeredEvents.length > 1 ? 's' : ''}.
                         </p>
+
+                        {/* Other registered events (excluding current) */}
+                        {participant.registeredEvents.filter(
+                          (ev) => ev !== eventMetadata.name,
+                        ).length > 0 && (
+                          <div className="text-sm mb-3 text-gray-600">
+                            <span className="mr-1">Also participating in</span>
+                            <span className="inline-flex flex-wrap gap-1">
+                              {participant.registeredEvents
+                                .filter((ev) => ev !== eventMetadata.name)
+                                .map((ev, i) => (
+                                  <span
+                                    key={i}
+                                    className="px-2 py-0.5 rounded-full bg-violet-50 font-semibold text-violet-700 border-2 border-violet-300 text-xs"
+                                  >
+                                    {ev}
+                                  </span>
+                                ))}
+                            </span>
+                          </div>
+                        )}
+
                         {participant.registeredEvents.some((x) =>
                           x.includes('GROUP'),
                         ) && (
@@ -567,27 +589,42 @@ export default function JudgePage() {
                             <div className="flex flex-row items-center justify-end gap-1 w-full">
                               <input
                                 type="number"
-                                className="border p-2 rounded-lg text-md w-[72px] border-slate-300"
+                                step="0.01"
+                                className="border p-2 rounded-lg text-md w-18 border-slate-300"
                                 max={eventMetadata.evalCriteria[key]}
                                 min={0}
                                 value={val}
                                 onChange={(e) => {
-                                  if (e.target.value < 0) {
-                                    e.target.value = 0;
-                                  } else if (
-                                    e.target.value >
-                                    eventMetadata.evalCriteria[key]
-                                  ) {
-                                    e.target.value =
-                                      eventMetadata.evalCriteria[key];
+                                  let value = e.target.value;
+
+                                  // Block more than 2 decimal places
+                                  if (value.includes('.')) {
+                                    const [intPart, decimalPart] =
+                                      value.split('.');
+                                    value =
+                                      intPart + '.' + decimalPart.slice(0, 2);
+                                  }
+
+                                  // Apply constraints
+                                  if (value !== '') {
+                                    const num = parseFloat(value);
+                                    if (num < 0) {
+                                      value = '0';
+                                    } else if (
+                                      num > eventMetadata.evalCriteria[key]
+                                    ) {
+                                      value = String(
+                                        eventMetadata.evalCriteria[key],
+                                      );
+                                    }
                                   }
 
                                   const newBuffer = [...scoreBuffer];
-                                  newBuffer[index][1] = e.target.value;
+                                  newBuffer[index][1] = value;
                                   setScoreBuffer(newBuffer);
                                 }}
                               />
-                              <span className="text-md w-[32px] text-right">
+                              <span className="text-md w-8 text-right">
                                 {' '}
                                 / {eventMetadata.evalCriteria[key]}
                               </span>
@@ -599,15 +636,16 @@ export default function JudgePage() {
                         <div className="flex flex-row justify-between align-middle">
                           <label className="text-sm">Total</label>
                           <div className="flex flex-row items-center justify-end gap-1 w-full">
-                            <p className="text-md font-semibold w-[72px] text-right">
-                              {scoreBuffer.reduce(
-                                (a, b) =>
-                                  (a == '' ? 0 : a) +
-                                  parseInt(b[1] == '' ? 0 : b[1]),
-                                0,
-                              )}
+                            <p className="text-md font-semibold w-18 text-right">
+                              {scoreBuffer
+                                .reduce(
+                                  (a, b) =>
+                                    a + parseFloat(b[1] === '' ? 0 : b[1]),
+                                  0,
+                                )
+                                .toFixed(2)}
                             </p>
-                            <span className="text-md w-[32px] text-right">
+                            <span className="text-md w-8 text-right">
                               {' '}
                               /{' '}
                               {Object.values(eventMetadata.evalCriteria).reduce(
@@ -762,10 +800,10 @@ export default function JudgePage() {
                         >
                           <label className="text-sm">{key}</label>
                           <div className="flex flex-row items-center justify-end gap-1 w-full">
-                            <p className="text-md font-semibold w-[72px] text-right">
+                            <p className="text-md font-semibold w-18 text-right">
                               {val}
                             </p>
-                            <span className="text-md w-[32px] text-right">
+                            <span className="text-md w-8 text-right">
                               {' '}
                               / {eventMetadata.evalCriteria[key]}
                             </span>
@@ -776,12 +814,14 @@ export default function JudgePage() {
                       <div className="flex flex-row justify-between items-center">
                         <label className="text-sm">Total</label>
                         <div className="flex flex-row items-center justify-end gap-1 w-full">
-                          <p className="text-md font-semibold w-[72px] text-right">
+                          <p className="text-md font-semibold w-18 text-right">
                             {Object.values(
                               participant.score[eventMetadata.name][user.id],
-                            ).reduce((a, b) => a + parseInt(b), 0)}
+                            )
+                              .reduce((a, b) => a + parseFloat(b), 0)
+                              .toFixed(2)}
                           </p>
-                          <span className="text-md w-[32px] text-right">
+                          <span className="text-md w-8 text-right">
                             {' '}
                             /{' '}
                             {Object.values(eventMetadata.evalCriteria).reduce(

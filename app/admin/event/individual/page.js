@@ -1,5 +1,6 @@
 'use client';
 
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
@@ -13,6 +14,9 @@ export default function EventLeaderboardIndiPage() {
   const [eventMetadata, setEventMetadata] = useState(null);
   const [participants, setParticipants] = useState(null);
   const [filteredParticipants, setFilteredParticipants] = useState(null);
+
+  const [orderedJudges, setOrderedJudges] = useState([]);
+
   const searchParams = useSearchParams();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,7 +35,7 @@ export default function EventLeaderboardIndiPage() {
     } else {
       setUser(user);
       getJudgeEventData(_eventName)
-        .then((_data) => {
+        .then(async (_data) => {
           if (_data == null || _data.length != 2) {
             router.push('/');
           }
@@ -59,7 +63,7 @@ export default function EventLeaderboardIndiPage() {
                   participant.judgeWiseTotal[judgeId] = 0;
                 }
 
-                participant.judgeWiseTotal[judgeId] += parseInt(
+                participant.judgeWiseTotal[judgeId] += parseFloat(
                   participant.score[_eventName][judgeId][criteria],
                 );
               });
@@ -90,6 +94,32 @@ export default function EventLeaderboardIndiPage() {
           _data[0].sort((a, b) => b.overallTotal - a.overallTotal);
 
           setEventMetadata(_data[1]);
+
+          const db = getFirestore();
+          const mappingSnap = await getDoc(
+            doc(db, 'eventJudgeMapping', _eventName),
+          );
+
+          let judges = [];
+
+          if (mappingSnap.exists()) {
+            const mapping = mappingSnap.data();
+            const expected = mapping.expectedJudgeCount || 0;
+            const judgeOrder = mapping.judgeOrder || [];
+
+            judgeOrder.sort((a, b) => a.order - b.order);
+
+            for (let i = 1; i <= expected; i++) {
+              const found = judgeOrder.find((j) => j.order === i);
+              judges.push(found?.name ?? 'Unknown');
+            }
+          } else {
+            // fallback safety
+            judges = _data[1].judgeIdList.map(() => 'Unknown');
+          }
+
+          setOrderedJudges(judges);
+
           setParticipants(_data[0]);
           setFilteredParticipants(_data[0]);
         })
@@ -100,6 +130,127 @@ export default function EventLeaderboardIndiPage() {
         });
     }
   }, [router, searchParams]);
+
+  const exportToCSV = () => {
+    if (!filteredParticipants || !eventMetadata || orderedJudges.length === 0)
+      return;
+
+    // Helper function to properly escape CSV values
+    const escapeCSV = (value) => {
+      if (value == null) return '';
+      const str = String(value);
+      // If contains comma, newline, or quotes, wrap in quotes and escape internal quotes
+      if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    // ---------- HEADERS ----------
+    // Create judge names for headers - MUST match the number of judges
+    const numJudges = eventMetadata.judgeIdList.length;
+    const cleanJudgeNames = [];
+
+    for (let i = 0; i < numJudges; i++) {
+      const judgeName = orderedJudges[i];
+      // Always return a name, even for Unknown
+      if (
+        !judgeName ||
+        judgeName === 'Unknown' ||
+        judgeName.trim().length < 3
+      ) {
+        cleanJudgeNames.push(`Judge ${i + 1}`);
+      } else {
+        // Use full name
+        cleanJudgeNames.push(judgeName.trim());
+      }
+    }
+
+    const criteriaList = Object.keys(eventMetadata.evalCriteria);
+
+    const headers = [
+      'Student Name',
+      'Student ID',
+      'District',
+      'Samithi',
+
+      // Criteria scores per judge - one column per criteria per judge
+      ...criteriaList.flatMap((criteria) =>
+        cleanJudgeNames.map((judgeName) => {
+          return `${criteria} (${judgeName})`;
+        }),
+      ),
+
+      // Judge totals - MUST have one for each judge
+      ...cleanJudgeNames.map((j) => `Total (${j})`),
+
+      'Overall Total',
+
+      // Comments - MUST have one for each judge
+      ...cleanJudgeNames.map((j) => `Comment (${j})`),
+    ];
+
+    // ---------- ROWS ----------
+    const rows = filteredParticipants.map((row) => {
+      const studentName =
+        row.substitute && row.substitute[eventMetadata.name]
+          ? row.substitute[eventMetadata.name].newStudentName
+          : (row.studentFullName ?? '-');
+
+      // CRITICAL: Build scores in exact order - criteria first, then judges within each criteria
+      const scores = [];
+      criteriaList.forEach((criteria) => {
+        eventMetadata.judgeIdList.forEach((judgeId) => {
+          const score = row.score?.[eventName]?.[judgeId]?.[criteria] ?? 0;
+          scores.push(score);
+        });
+      });
+
+      // Get judge totals - must be in same order as judgeIdList
+      const judgeTotals = [];
+      eventMetadata.judgeIdList.forEach((judgeId) => {
+        const total = row.judgeWiseTotal?.[judgeId] ?? 0;
+        judgeTotals.push(parseFloat(total).toFixed(2));
+      });
+
+      // Get comments - must be in same order as judgeIdList
+      const comments = [];
+      eventMetadata.judgeIdList.forEach((judgeId) => {
+        const comment = row.comment?.[eventName]?.[judgeId] || '-';
+        // Clean up comment: remove extra whitespace and newlines
+        comments.push(String(comment).replace(/\s+/g, ' ').trim());
+      });
+
+      return [
+        studentName,
+        row.studentId ?? '-',
+        row.district ?? '-',
+        row.samithiName ?? '-',
+        ...scores,
+        ...judgeTotals,
+        parseFloat(row.overallTotal ?? 0).toFixed(2),
+        ...comments,
+      ];
+    });
+
+    // Build CSV with proper escaping
+    const csv = [
+      headers.map(escapeCSV).join(','),
+      ...rows.map((r) => r.map(escapeCSV).join(',')),
+    ].join('\r\n'); // Use \r\n for better Excel compatibility
+
+    // Add BOM for proper UTF-8 encoding in Excel
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${eventName}_leaderboard.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
 
   return eventName &&
     user &&
@@ -188,7 +339,15 @@ export default function EventLeaderboardIndiPage() {
 
         <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
           <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
-            <h1 className="text-2xl font-bold">Leaderboard</h1>
+            <div className="w-full flex justify-between">
+              <h1 className="text-2xl font-bold">Leaderboard</h1>
+              <button
+                onClick={exportToCSV}
+                className="px-4 py-1 text-md bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Export
+              </button>
+            </div>
             <table className="table-auto w-full mt-4">
               <thead>
                 <tr>
@@ -215,7 +374,7 @@ export default function EventLeaderboardIndiPage() {
                   <tr key={index}>
                     <td
                       className={
-                        'px-4 py-2 border max-w-[160px]' +
+                        'px-4 py-2 border max-w-40' +
                         (row.substitute && row.substitute[eventMetadata.name]
                           ? ' bg-[#ffcece]'
                           : '')
@@ -261,7 +420,7 @@ export default function EventLeaderboardIndiPage() {
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-2 border max-w-[200px]">
+                    <td className="px-4 py-2 border max-w-50">
                       <p className="font-bold">{row.district ?? '-'}</p>
                       <p className="text-xs">{row.samithiName ?? '-'}</p>
                       {row.studentGroup === 'Group 3' && (
@@ -304,12 +463,12 @@ export default function EventLeaderboardIndiPage() {
                           key={index}
                           className="text-xs"
                         >
-                          {total}
+                          {parseFloat(total).toFixed(2)}
                         </p>
                       ))}
                     </td>
                     <td className="px-4 py-2 border font-bold">
-                      {row.overallTotal}
+                      {parseFloat(row.overallTotal).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 border">
                       <div className="flex flex-col">

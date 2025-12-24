@@ -1,5 +1,6 @@
 'use client';
 
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
@@ -13,6 +14,7 @@ export default function GroupEventLeaderboardPage() {
   const [eventName, setEventName] = useState(null);
   const [eventMetadata, setEventMetadata] = useState(null);
   const [groups, setGroups] = useState(null);
+  const [orderedJudges, setOrderedJudges] = useState([]);
 
   const searchParams = useSearchParams();
 
@@ -30,7 +32,7 @@ export default function GroupEventLeaderboardPage() {
     } else {
       setUser(user);
       getJudgeEventData(_eventName)
-        .then((_data) => {
+        .then(async (_data) => {
           if (_data == null || _data.length != 2) {
             router.push('/');
           }
@@ -78,7 +80,7 @@ export default function GroupEventLeaderboardPage() {
                   group.judgeWiseTotal[judgeId] = 0;
                 }
 
-                group.judgeWiseTotal[judgeId] += parseInt(
+                group.judgeWiseTotal[judgeId] += parseFloat(
                   group.score[_eventName][judgeId][criteria],
                 );
               });
@@ -118,6 +120,168 @@ export default function GroupEventLeaderboardPage() {
         });
     }
   }, [router, eventName, searchParams]);
+
+  // Add this useEffect to fetch judge names from eventJudgeMapping
+  useEffect(() => {
+    if (!eventMetadata || !groups || !eventName) return;
+
+    const fetchJudgeNames = async () => {
+      const db = getFirestore();
+
+      try {
+        // Get the event document from eventJudgeMapping collection
+        const eventJudgeMappingDoc = await getDoc(
+          doc(db, 'eventJudgeMapping', eventName),
+        );
+
+        if (eventJudgeMappingDoc.exists()) {
+          const data = eventJudgeMappingDoc.data();
+          const judgeOrder = data.judgeOrder || [];
+
+          // Extract judge names from judgeOrder array
+          // judgeOrder structure: [{ name: "Judge Name", order: 1 }, ...]
+          const sortedJudges = [...judgeOrder].sort(
+            (a, b) => a.order - b.order,
+          );
+          const judgeNames = sortedJudges.map(
+            (judge) => judge.name || 'Unknown',
+          );
+
+          setOrderedJudges(judgeNames);
+        } else {
+          // Fallback: create generic judge names
+          const fallbackNames = eventMetadata.judgeIdList.map(
+            (_, i) => `Judge ${i + 1}`,
+          );
+          setOrderedJudges(fallbackNames);
+        }
+      } catch (err) {
+        console.error('Error fetching judge names:', err);
+        // Fallback: create generic judge names
+        const fallbackNames = eventMetadata.judgeIdList.map(
+          (_, i) => `Judge ${i + 1}`,
+        );
+        setOrderedJudges(fallbackNames);
+      }
+    };
+
+    fetchJudgeNames();
+  }, [eventMetadata, groups, eventName]);
+
+  // Add this function for CSV export
+  const exportToCSV = () => {
+    if (!groups || !eventMetadata || orderedJudges.length === 0) return;
+
+    // Helper function to properly escape CSV values
+    const escapeCSV = (value) => {
+      if (value == null) return '';
+      const str = String(value);
+      // If contains comma, newline, or quotes, wrap in quotes and escape internal quotes
+      if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    // ---------- HEADERS ----------
+    const numJudges = eventMetadata.judgeIdList.length;
+    const cleanJudgeNames = [];
+
+    for (let i = 0; i < numJudges; i++) {
+      const judgeName = orderedJudges[i];
+      if (
+        !judgeName ||
+        judgeName === 'Unknown' ||
+        judgeName.trim().length < 3
+      ) {
+        cleanJudgeNames.push(`Judge ${i + 1}`);
+      } else {
+        cleanJudgeNames.push(judgeName.trim());
+      }
+    }
+
+    const criteriaList = Object.keys(eventMetadata.evalCriteria);
+
+    const headers = [
+      'District',
+      'Student IDs',
+      'Student Names',
+
+      // Criteria scores per judge
+      ...criteriaList.flatMap((criteria) =>
+        cleanJudgeNames.map((judgeName) => {
+          return `${criteria} (${judgeName})`;
+        }),
+      ),
+
+      // Judge totals
+      ...cleanJudgeNames.map((j) => `Total (${j})`),
+
+      'Overall Total',
+
+      // Comments
+      ...cleanJudgeNames.map((j) => `Comment (${j})`),
+    ];
+
+    // ---------- ROWS ----------
+    const rows = groups.map((group) => {
+      // Combine student IDs and names
+      const studentIds = group.members.map((m) => m.id).join('; ');
+      const studentNames = group.members.map((m) => m.name).join('; ');
+
+      // Build scores in exact order - criteria first, then judges within each criteria
+      const scores = [];
+      criteriaList.forEach((criteria) => {
+        eventMetadata.judgeIdList.forEach((judgeId) => {
+          const score = group.score?.[eventName]?.[judgeId]?.[criteria] ?? 0;
+          scores.push(score);
+        });
+      });
+
+      // Get judge totals - must be in same order as judgeIdList
+      const judgeTotals = [];
+      eventMetadata.judgeIdList.forEach((judgeId) => {
+        const total = group.judgeWiseTotal?.[judgeId] ?? 0;
+        judgeTotals.push(parseFloat(total).toFixed(2));
+      });
+
+      // Get comments - must be in same order as judgeIdList
+      const comments = [];
+      eventMetadata.judgeIdList.forEach((judgeId) => {
+        const comment = group.comment?.[eventName]?.[judgeId] || '-';
+        // Clean up comment: remove extra whitespace and newlines
+        comments.push(String(comment).replace(/\s+/g, ' ').trim());
+      });
+
+      return [
+        group.district ?? 'Unknown',
+        studentIds,
+        studentNames,
+        ...scores,
+        ...judgeTotals,
+        parseFloat(group.overallTotal ?? 0).toFixed(2),
+        ...comments,
+      ];
+    });
+
+    // Build CSV with proper escaping
+    const csv = [
+      headers.map(escapeCSV).join(','),
+      ...rows.map((r) => r.map(escapeCSV).join(',')),
+    ].join('\r\n');
+
+    // Add BOM for proper UTF-8 encoding in Excel
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${eventName}_group_leaderboard.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
 
   return eventName && user && eventMetadata && groups ? (
     <>
@@ -202,7 +366,15 @@ export default function GroupEventLeaderboardPage() {
 
         <div className="flex flex-col justify-center w-fit min-w-[95%] ml-auto mr-auto">
           <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
-            <h1 className="text-2xl font-bold">Leaderboard</h1>
+            <div className="w-full flex justify-between">
+              <h1 className="text-2xl font-bold">Leaderboard</h1>
+              <button
+                onClick={exportToCSV}
+                className="px-4 py-1 text-md bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Export
+              </button>
+            </div>
             <table className="table-auto w-full mt-4">
               <thead>
                 <tr>
@@ -267,12 +439,12 @@ export default function GroupEventLeaderboardPage() {
                           key={i}
                           className="text-xs"
                         >
-                          {total}
+                          {parseFloat(total).toFixed(2)}
                         </p>
                       ))}
                     </td>
                     <td className="px-4 py-2 border font-bold">
-                      {group.overallTotal}
+                      {parseFloat(group.overallTotal).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 border">
                       {eventMetadata.judgeIdList.map((judgeId, i2) => (
