@@ -9,3 +9,5 @@ transport
 accommodation
 event_wise_registration.zip
 .DS_Store
+
+.env
