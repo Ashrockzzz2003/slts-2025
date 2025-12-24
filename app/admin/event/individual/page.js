@@ -173,6 +173,7 @@ export default function EventLeaderboardIndiPage() {
       'Student ID',
       'District',
       'Samithi',
+      'Attendance',
 
       // Criteria scores per judge - one column per criteria per judge
       ...criteriaList.flatMap((criteria) =>
@@ -226,6 +227,9 @@ export default function EventLeaderboardIndiPage() {
         row.studentId ?? '-',
         row.district ?? '-',
         row.samithiName ?? '-',
+
+        row.ATTENDEE_STATUS === 'Attended' ? 'Present' : 'Yet to Check In',
+
         ...scores,
         ...judgeTotals,
         parseFloat(row.overallTotal ?? 0).toFixed(2),
@@ -358,9 +362,16 @@ export default function EventLeaderboardIndiPage() {
                       (criteria, index) => (
                         <th
                           key={index}
-                          className="border px-4 py-2"
+                          className="border px-4 py-2 text-center"
                         >
-                          {criteria}
+                          {criteria.split(' ').map((word, i) => (
+                            <span
+                              key={i}
+                              className="block"
+                            >
+                              {word}
+                            </span>
+                          ))}
                         </th>
                       ),
                     )}
@@ -406,10 +417,24 @@ export default function EventLeaderboardIndiPage() {
                           <p className="font-bold">
                             {row.studentFullName ?? '-'}
                           </p>
-                          <p className="text-xs">
+
+                          <span
+                            className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                              row.ATTENDEE_STATUS === 'Attended'
+                                ? 'bg-green-100 text-green-700 border border-green-300'
+                                : 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                            }`}
+                          >
+                            {row.ATTENDEE_STATUS === 'Attended'
+                              ? 'Present'
+                              : 'Yet to Check In'}
+                          </span>
+
+                          <p className="text-xs mt-1">
                             {row.gender ?? '-'} - {row.dateOfBirth ?? '-'}
                           </p>
-                          <div className="flex flex-wrap gap-1">
+
+                          <div className="flex flex-wrap gap-1 mt-1">
                             <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">
                               {row.studentId ?? '-'}
                             </p>

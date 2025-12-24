@@ -186,9 +186,23 @@ export default function JudgeGroupPage() {
                         >
                           <div className="flex flex-row justify-between">
                             <div>
-                              <h2 className="text-xl font-bold">
-                                {participant.studentId}
-                              </h2>
+                              <div className="flex items-center gap-2">
+                                <h2 className="text-xl font-bold">
+                                  {participant.studentId}
+                                </h2>
+
+                                <span
+                                  className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                    participant.ATTENDEE_STATUS === 'Attended'
+                                      ? 'bg-green-100 text-green-700 border border-green-300'
+                                      : 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                                  }`}
+                                >
+                                  {participant.ATTENDEE_STATUS === 'Attended'
+                                    ? 'Present'
+                                    : 'Yet to Check In'}
+                                </span>
+                              </div>
                               <p className="text-sm">
                                 Participating in{' '}
                                 <span className="font-bold">

@@ -399,21 +399,40 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 align-top">
                         <div className="flex flex-col gap-2">
                           <div className="flex flex-col">
-                            <span className="text-sm font-bold text-gray-900">
-                              {row.studentFullName ?? '-'}
-                            </span>
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-gray-900">
+                                {row.studentFullName ?? '-'}
+                              </span>
+
                               <span
-                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${row.gender === 'Male' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}`}
+                                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                  row.ATTENDEE_STATUS === 'Attended'
+                                    ? 'bg-green-100 text-green-700 border border-green-300'
+                                    : 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                                }`}
+                              >
+                                {row.ATTENDEE_STATUS === 'Attended'
+                                  ? 'Present'
+                                  : 'Yet to Check In'}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                  row.gender === 'Male'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-pink-100 text-pink-800'
+                                }`}
                               >
                                 {row.gender?.[0] ?? '-'}
                               </span>
+
                               <span className="text-xs text-gray-500">
                                 {row.studentId}
                               </span>
                             </div>
                           </div>
-
                           <div className="flex flex-col gap-1">
                             <span className="inline-flex w-fit items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
                               {row.studentGroup}
