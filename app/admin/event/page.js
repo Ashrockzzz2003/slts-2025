@@ -9,7 +9,11 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
-import { getEventData, updateCrieria } from '@/app/_util/data';
+import {
+  getEventData,
+  getJudgeEventData,
+  updateCrieria,
+} from '@/app/_util/data';
 import { auth } from '@/app/_util/initApp';
 
 export default function ManageEvents() {
@@ -62,6 +66,161 @@ export default function ManageEvents() {
       );
     }
   }, [data, filterGroup, searchQuery]);
+
+  const downloadFinalResults = async () => {
+    if (!data || data.length === 0) return;
+
+    const rows = [];
+
+    // ---------- CSV escape ----------
+    const esc = (v) => {
+      if (v == null) return '';
+      const s = String(v);
+      return s.includes(',') || s.includes('\n') || s.includes('"')
+        ? `"${s.replace(/"/g, '""')}"`
+        : s;
+    };
+
+    // ---------- HEADER ----------
+    rows.push([
+      'Event Type',
+      'Event Name',
+      'Rank',
+      'District',
+      'Student / Group Members',
+      'Student IDs',
+      'Total Score',
+    ]);
+
+    // ---------- LOOP EVENTS ----------
+    for (const event of data) {
+      const isGroup = event.name.includes('GROUP');
+
+      const result = await getJudgeEventData(event.name);
+      if (!result || result.length !== 2) continue;
+
+      const participants = result[0];
+      const meta = result[1];
+
+      const criteriaList = Object.keys(meta.evalCriteria);
+      const judgeIds = meta.judgeIdList;
+
+      // ===============================
+      // INDIVIDUAL EVENTS
+      // ===============================
+      if (!isGroup) {
+        participants.forEach((p) => {
+          p.judgeWiseTotal = {};
+          judgeIds.forEach((jid) => (p.judgeWiseTotal[jid] = 0));
+
+          criteriaList.forEach((c) => {
+            judgeIds.forEach((jid) => {
+              const score = parseFloat(p.score?.[event.name]?.[jid]?.[c] ?? 0);
+              p.judgeWiseTotal[jid] += score;
+            });
+          });
+
+          p.overallTotal = Object.values(p.judgeWiseTotal).reduce(
+            (a, b) => a + b,
+            0,
+          );
+        });
+
+        participants
+          .sort((a, b) => b.overallTotal - a.overallTotal)
+          .slice(0, 3)
+          .forEach((p, i) => {
+            rows.push([
+              'Individual',
+              event.name,
+              i + 1,
+              p.district ?? '-',
+              p.studentFullName ?? '-',
+              p.studentId ?? '-',
+              p.overallTotal.toFixed(2),
+            ]);
+          });
+      }
+
+      // ===============================
+      // GROUP EVENTS
+      // ===============================
+      else {
+        const grouped = {};
+
+        participants.forEach((p) => {
+          const key = p.district || 'Unknown';
+
+          if (!grouped[key]) {
+            grouped[key] = {
+              district: key,
+              members: [],
+              judgeWiseTotal: {},
+            };
+            judgeIds.forEach((jid) => (grouped[key].judgeWiseTotal[jid] = 0));
+          }
+
+          grouped[key].members.push({
+            id: p.studentId ?? '-',
+            name: p.studentFullName ?? '-',
+            district: p.district ?? 'Unknown',
+          });
+
+          criteriaList.forEach((c) => {
+            judgeIds.forEach((jid) => {
+              const score = parseFloat(p.score?.[event.name]?.[jid]?.[c] ?? 0);
+              grouped[key].judgeWiseTotal[jid] += score;
+            });
+          });
+        });
+
+        Object.values(grouped).forEach((g) => {
+          g.overallTotal = Object.values(g.judgeWiseTotal).reduce(
+            (a, b) => a + b,
+            0,
+          );
+        });
+
+        Object.values(grouped)
+          .sort((a, b) => {
+            if (b.overallTotal !== a.overallTotal) {
+              return b.overallTotal - a.overallTotal; // score DESC
+            }
+            return (a.district ?? '').localeCompare(b.district ?? ''); // district ASC
+          })
+          .slice(0, 3)
+          .forEach((g, i) => {
+            const membersSorted = g.members
+              .sort((a, b) => a.district.localeCompare(b.district))
+              .map((m) => `${m.id} - ${m.name}`)
+              .join(' | ');
+
+            rows.push([
+              'Group',
+              event.name,
+              i + 1,
+              g.district,
+              membersSorted,
+              '',
+              g.overallTotal.toFixed(2),
+            ]);
+          });
+      }
+    }
+
+    // ---------- DOWNLOAD ----------
+    const csv = '\uFEFF' + rows.map((r) => r.map(esc).join(',')).join('\r\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Final_Results.csv';
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
 
   return !isLoading && user && filteredData ? (
     <>
@@ -138,6 +297,16 @@ export default function ManageEvents() {
                 </select>
               </div>
             </div>
+          </div>
+
+          {/* Download Results */}
+          <div className="flex justify-end mb-6">
+            <button
+              onClick={downloadFinalResults}
+              className="bg-blue-600 text-white px-5 py-2 rounded-xl font-semibold hover:bg-blue-700 transition"
+            >
+              Download Final Results
+            </button>
           </div>
 
           {/* Content Section */}
