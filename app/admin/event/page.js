@@ -70,27 +70,7 @@ export default function ManageEvents() {
   const downloadFinalResults = async () => {
     if (!data || data.length === 0) return;
 
-    const rows = [];
-
-    // ---------- CSV escape ----------
-    const esc = (v) => {
-      if (v == null) return '';
-      const s = String(v);
-      return s.includes(',') || s.includes('\n') || s.includes('"')
-        ? `"${s.replace(/"/g, '""')}"`
-        : s;
-    };
-
-    // ---------- HEADER ----------
-    rows.push([
-      'Event Type',
-      'Event Name',
-      'Rank',
-      'District',
-      'Student / Group Members',
-      'Student IDs',
-      'Total Score',
-    ]);
+    const allRows = [];
 
     // ---------- LOOP EVENTS ----------
     for (const event of data) {
@@ -102,8 +82,8 @@ export default function ManageEvents() {
       const participants = result[0];
       const meta = result[1];
 
-      const criteriaList = Object.keys(meta.evalCriteria);
       const judgeIds = meta.judgeIdList;
+      const criteriaList = Object.keys(meta.evalCriteria);
 
       // ===============================
       // INDIVIDUAL EVENTS
@@ -126,19 +106,39 @@ export default function ManageEvents() {
           );
         });
 
+        // Take top 5 to match certificate export format/logic
         participants
           .sort((a, b) => b.overallTotal - a.overallTotal)
-          .slice(0, 3)
+          .slice(0, 5)
           .forEach((p, i) => {
-            rows.push([
-              'Individual',
-              event.name,
-              i + 1,
-              p.district ?? '-',
-              p.studentFullName ?? '-',
-              p.studentId ?? '-',
-              p.overallTotal.toFixed(2),
-            ]);
+            // Check for substitution
+            const isSubstituted = p.substitute && p.substitute[event.name];
+            const studentName = isSubstituted
+              ? p.substitute[event.name].newStudentName
+              : p.studentFullName;
+
+            const studentGender = isSubstituted
+              ? p.substitute[event.name].newStudentGender
+              : p.gender;
+
+            const studentDOB = isSubstituted
+              ? p.substitute[event.name].newStudentDOB
+              : p.dateOfBirth;
+
+            const studentGroup = isSubstituted
+              ? p.substitute[event.name].newStudentGroup
+              : p.studentGroup;
+
+            allRows.push({
+              eventName: event.name,
+              Rank: i + 1,
+              ...p,
+              studentFullName: studentName,
+              gender: studentGender,
+              dateOfBirth: studentDOB,
+              studentGroup: studentGroup,
+              OverallTotal: parseFloat(p.overallTotal ?? 0).toFixed(2),
+            });
           });
       }
 
@@ -156,25 +156,41 @@ export default function ManageEvents() {
               district: key,
               members: [],
               judgeWiseTotal: {},
+              score: {},
             };
             judgeIds.forEach((jid) => (grouped[key].judgeWiseTotal[jid] = 0));
           }
 
+          // In group export, we flatten members.
+          // Store raw participant data if needed, but here we just need to group them first.
           grouped[key].members.push({
-            id: p.studentId ?? '-',
-            name: p.studentFullName ?? '-',
-            district: p.district ?? 'Unknown',
-          });
-
-          criteriaList.forEach((c) => {
-            judgeIds.forEach((jid) => {
-              const score = parseFloat(p.score?.[event.name]?.[jid]?.[c] ?? 0);
-              grouped[key].judgeWiseTotal[jid] += score;
-            });
+            ...p,
+            name: p.studentFullName || 'Unknown',
+            id: p.studentId || 'Unknown ID',
           });
         });
 
+        // Assign score from first participant found for that group
+        participants.forEach((p) => {
+          const key = p.district || 'Unknown';
+          if (
+            !grouped[key].score ||
+            Object.keys(grouped[key].score).length === 0
+          ) {
+            grouped[key].score = p.score || {};
+          }
+        });
+
         Object.values(grouped).forEach((g) => {
+          judgeIds.forEach((jid) => {
+            let jTotal = 0;
+            criteriaList.forEach((c) => {
+              const s = parseFloat(g.score?.[event.name]?.[jid]?.[c] ?? 0);
+              jTotal += s;
+            });
+            g.judgeWiseTotal[jid] = jTotal;
+          });
+
           g.overallTotal = Object.values(g.judgeWiseTotal).reduce(
             (a, b) => a + b,
             0,
@@ -188,28 +204,77 @@ export default function ManageEvents() {
             }
             return (a.district ?? '').localeCompare(b.district ?? ''); // district ASC
           })
-          .slice(0, 3)
+          .slice(0, 5)
           .forEach((g, i) => {
-            const membersSorted = g.members
-              .sort((a, b) => a.district.localeCompare(b.district))
-              .map((m) => `${m.id} - ${m.name}`)
-              .join(' | ');
-
-            rows.push([
-              'Group',
-              event.name,
-              i + 1,
-              g.district,
-              membersSorted,
-              '',
-              g.overallTotal.toFixed(2),
-            ]);
+            const rank = i + 1;
+            // Flatten members
+            g.members.forEach((member) => {
+              allRows.push({
+                eventName: event.name,
+                Rank: rank,
+                ...member,
+                // Map to standard keys
+                studentFullName: member.name,
+                studentId: member.id,
+                district: g.district || 'Unknown',
+                OverallTotal: parseFloat(g.overallTotal ?? 0).toFixed(2),
+              });
+            });
           });
       }
     }
 
+    if (allRows.length === 0) return;
+
+    // Collect all unique keys
+    const allKeys = new Set();
+    allRows.forEach((item) => {
+      Object.keys(item).forEach((key) => {
+        const val = item[key];
+        if (val !== null && typeof val === 'object' && !Array.isArray(val)) {
+          return;
+        }
+        allKeys.add(key);
+      });
+    });
+
+    const headers = Array.from(allKeys).sort();
+    // Use the same prioritized list as the individual/group export
+    const prioritized = [
+      'eventName',
+      'Rank',
+      'studentFullName',
+      'studentId',
+      'district',
+      'samithiName',
+      'studentGroup',
+      'OverallTotal',
+    ];
+
+    const sortedHeaders = [
+      ...prioritized.filter((h) => headers.includes(h)),
+      ...headers.filter((h) => !prioritized.includes(h)),
+    ];
+
+    // CSV Escape helper
+    const esc = (v) => {
+      if (v == null) return '';
+      if (Array.isArray(v)) return `"${v.join('; ')}"`;
+      const s = String(v);
+      return s.includes(',') || s.includes('\n') || s.includes('"')
+        ? `"${s.replace(/"/g, '""')}"`
+        : s;
+    };
+
     // ---------- DOWNLOAD ----------
-    const csv = '\uFEFF' + rows.map((r) => r.map(esc).join(',')).join('\r\n');
+    const csv =
+      '\uFEFF' +
+      [
+        sortedHeaders.map(esc).join(','),
+        ...allRows.map((row) =>
+          sortedHeaders.map((header) => esc(row[header])).join(','),
+        ),
+      ].join('\r\n');
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);

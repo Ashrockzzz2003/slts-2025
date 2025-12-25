@@ -131,6 +131,112 @@ export default function EventLeaderboardIndiPage() {
     }
   }, [router, searchParams]);
 
+  const exportForCert = () => {
+    if (!filteredParticipants || !eventMetadata) return;
+
+    // Filter top 5 participants based on overallTotal (descending)
+    // Assuming filteredParticipants are already sorted by overallTotal,
+    // otherwise we would need to sort first:
+    // const sorted = [...filteredParticipants].sort((a, b) => (b.overallTotal || 0) - (a.overallTotal || 0));
+    const topParticipants = filteredParticipants.slice(0, 5);
+
+    if (topParticipants.length === 0) return;
+
+    const flatList = topParticipants.map((p, index) => {
+      // Determine effective student name and related details if substituted
+      const isSubstituted = p.substitute && p.substitute[eventMetadata.name];
+      const studentName = isSubstituted
+        ? p.substitute[eventMetadata.name].newStudentName
+        : p.studentFullName;
+
+      const studentGender = isSubstituted
+        ? p.substitute[eventMetadata.name].newStudentGender
+        : p.gender;
+
+      const studentDOB = isSubstituted
+        ? p.substitute[eventMetadata.name].newStudentDOB
+        : p.dateOfBirth;
+
+      const studentGroup = isSubstituted
+        ? p.substitute[eventMetadata.name].newStudentGroup
+        : p.studentGroup;
+
+      return {
+        eventName: eventName,
+        Rank: index + 1,
+        ...p,
+        // Override with substituted values where applicable for the certificate
+        studentFullName: studentName,
+        gender: studentGender,
+        dateOfBirth: studentDOB,
+        studentGroup: studentGroup,
+        // Format the total score
+        OverallTotal: parseFloat(p.overallTotal ?? 0).toFixed(2),
+      };
+    });
+
+    const allKeys = new Set();
+    flatList.forEach((item) => {
+      Object.keys(item).forEach((key) => {
+        const val = item[key];
+        // Skip complex objects/arrays except for specific ones if needed.
+        // We generally want scalar values.
+        if (
+          val !== null &&
+          typeof val === 'object' &&
+          !Array.isArray(val) &&
+          key !== 'Rank' // Rank is scalar but good to be explicit
+        ) {
+          return;
+        }
+        allKeys.add(key);
+      });
+    });
+
+    const headers = Array.from(allKeys).sort();
+    // Prioritize common certificate fields
+    const prioritized = [
+      'eventName',
+      'Rank',
+      'studentFullName',
+      'studentId',
+      'district',
+      'samithiName',
+      'OverallTotal',
+      'studentGroup',
+    ];
+    const sortedHeaders = [
+      ...prioritized.filter((h) => headers.includes(h)),
+      ...headers.filter((h) => !prioritized.includes(h)),
+    ];
+
+    const escapeCSV = (value) => {
+      if (value == null) return '';
+      if (Array.isArray(value)) return `"${value.join('; ')}"`;
+      const str = String(value);
+      if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const csv = [
+      sortedHeaders.map(escapeCSV).join(','),
+      ...flatList.map((row) =>
+        sortedHeaders.map((header) => escapeCSV(row[header])).join(','),
+      ),
+    ].join('\r\n');
+
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${eventName}_top5_cert_export.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const exportToCSV = () => {
     if (!filteredParticipants || !eventMetadata || orderedJudges.length === 0)
       return;
@@ -345,12 +451,20 @@ export default function EventLeaderboardIndiPage() {
           <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
             <div className="w-full flex justify-between">
               <h1 className="text-2xl font-bold">Leaderboard</h1>
-              <button
-                onClick={exportToCSV}
-                className="px-4 py-1 text-md bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Export
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={exportForCert}
+                  className="px-4 py-1 text-md bg-green-500 text-white rounded-lg hover:bg-green-600"
+                >
+                  Export for Cert
+                </button>
+                <button
+                  onClick={exportToCSV}
+                  className="px-4 py-1 text-md bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Export
+                </button>
+              </div>
             </div>
             <table className="table-auto w-full mt-4">
               <thead>

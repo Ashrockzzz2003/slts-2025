@@ -47,6 +47,7 @@ export default function GroupEventLeaderboardPage() {
               };
             }
             acc[key].members.push({
+              ...participant,
               name: participant.studentFullName || 'Unknown',
               id: participant.studentId || 'Unknown ID',
               ATTENDEE_STATUS: participant.ATTENDEE_STATUS,
@@ -168,6 +169,84 @@ export default function GroupEventLeaderboardPage() {
 
     fetchJudgeNames();
   }, [eventMetadata, groups, eventName]);
+
+  const exportForCert = () => {
+    if (!groups || !eventMetadata) return;
+
+    const topGroups = groups.slice(0, 5);
+    const flatList = [];
+
+    topGroups.forEach((group, index) => {
+      const rank = index + 1;
+      group.members.forEach((member) => {
+        const row = {
+          eventName: eventName,
+          Rank: rank,
+          ...member,
+          // Rename keys to match Individual export
+          studentFullName: member.name,
+          studentId: member.id,
+          district: group.district || 'Unknown',
+          OverallTotal: parseFloat(group.overallTotal ?? 0).toFixed(2),
+        };
+        flatList.push(row);
+      });
+    });
+
+    if (flatList.length === 0) return;
+
+    const allKeys = new Set();
+    flatList.forEach((item) => {
+      Object.keys(item).forEach((key) => {
+        const val = item[key];
+        if (val !== null && typeof val === 'object' && !Array.isArray(val)) {
+          return;
+        }
+        allKeys.add(key);
+      });
+    });
+
+    const headers = Array.from(allKeys).sort();
+    const prioritized = [
+      'eventName',
+      'Rank',
+      'studentFullName',
+      'studentId',
+      'district',
+      'studentGroup',
+      'OverallTotal',
+    ];
+    const sortedHeaders = [
+      ...prioritized.filter((h) => headers.includes(h)),
+      ...headers.filter((h) => !prioritized.includes(h)),
+    ];
+
+    const escapeCSV = (value) => {
+      if (value == null) return '';
+      if (Array.isArray(value)) return `"${value.join('; ')}"`;
+      const str = String(value);
+      if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const csv = [
+      sortedHeaders.map(escapeCSV).join(','),
+      ...flatList.map((row) =>
+        sortedHeaders.map((header) => escapeCSV(row[header])).join(','),
+      ),
+    ].join('\r\n');
+
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${eventName}_top5_cert_export.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Add this function for CSV export
   const exportToCSV = () => {
@@ -377,12 +456,20 @@ export default function GroupEventLeaderboardPage() {
           <div className="rounded-2xl p-4 my-4 bg-white border overflow-x-auto">
             <div className="w-full flex justify-between">
               <h1 className="text-2xl font-bold">Leaderboard</h1>
-              <button
-                onClick={exportToCSV}
-                className="px-4 py-1 text-md bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Export
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={exportForCert}
+                  className="px-4 py-1 text-md bg-green-500 text-white rounded-lg hover:bg-green-600"
+                >
+                  Export for Cert
+                </button>
+                <button
+                  onClick={exportToCSV}
+                  className="px-4 py-1 text-md bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Export
+                </button>
+              </div>
             </div>
             <table className="table-auto w-full mt-4">
               <thead>
