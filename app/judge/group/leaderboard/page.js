@@ -215,7 +215,7 @@ export default function GroupEventLeaderboardPage() {
                           key={i}
                           className="text-xs mt-2"
                         >
-                          <span className="flex items-center gap-2">
+                          <span className="flex items-center gap-2 flex-col my-8">
                             <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">
                               {member.id}
                             </span>

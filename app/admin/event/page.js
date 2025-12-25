@@ -370,7 +370,7 @@ export default function ManageEvents() {
                             {event.judgeEmailList.map((judge, idx) => {
                               const password = judge
                                 .toString()
-                                .replace('@slts.cbe', '@23111926');
+                                .replace('@slts.cbe', '@2311pass26');
                               return (
                                 <div
                                   key={idx}
