@@ -548,7 +548,7 @@ export default function AdminDashboard() {
                   key={index}
                   className={`${row.overallRegistrationStatus === 'Accepted' ? 'bg-white' : 'bg-red-200'} hover:bg-blue-50 text-bold transition duration-200`}
                 >
-                  <td className="px-4 py-2 border max-w-[240px]">
+                  <td className="px-4 py-2 border max-w-60">
                     <div className="flex flex-col gap-2">
                       {row.entryMarked === true && (
                         <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-full text-center">
@@ -688,7 +688,7 @@ export default function AdminDashboard() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-2 border max-w-[160px]">
+                  <td className="px-4 py-2 border max-w-40">
                     <p className="font-bold">{row.studentFullName ?? '-'}</p>
                     <p className="text-xs">
                       {row.gender ?? '-'} - {row.dateOfBirth ?? '-'}
@@ -702,7 +702,7 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                   </td>
-                  <td className="px-4 py-2 border max-w-[200px]">
+                  <td className="px-4 py-2 border max-w-50">
                     <p className="font-bold">{row.district ?? '-'}</p>
                     <p className="text-xs">{row.samithiName ?? '-'}</p>
                     <p className="text-xs">
@@ -725,7 +725,7 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                   </td>
-                  <td className="border max-w-[200px]">
+                  <td className="border max-w-50">
                     <div className="flex flex-col justify-around items-center gap-4 mt-2 mb-2">
                       <div className="border rounded-2xl p-2 w-60">
                         <p className="text-xs font-semibold">{'Arrival'}</p>

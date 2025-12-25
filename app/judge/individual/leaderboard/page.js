@@ -224,10 +224,23 @@ export default function EventLeaderboardIndiPage() {
                         </div>
                       ) : (
                         <div>
-                          <div className="flex flex-wrap gap-1">
+                          <div className="flex flex-wrap items-center gap-1">
                             <p className="text-xs font-bold bg-[#c4ffc2] text-[#07210d] p-1 px-2 rounded-2xl w-fit">
                               {row.studentId ?? '-'}
                             </p>
+
+                            <span
+                              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                row.ATTENDEE_STATUS === 'Attended'
+                                  ? 'bg-green-100 text-green-700 border border-green-300'
+                                  : 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                              }`}
+                            >
+                              {row.ATTENDEE_STATUS === 'Attended'
+                                ? 'Present'
+                                : 'Yet to Check In'}
+                            </span>
+
                             <p className="text-xs font-bold bg-[#bad1ff] text-[#090e2d] p-1 px-2 rounded-2xl w-fit">
                               {row.studentGroup ?? '-'}
                             </p>

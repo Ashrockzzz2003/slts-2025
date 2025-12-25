@@ -49,6 +49,7 @@ export default function GroupEventLeaderboardPage() {
             acc[key].members.push({
               name: participant.studentFullName || 'Unknown',
               id: participant.studentId || 'Unknown ID',
+              ATTENDEE_STATUS: participant.ATTENDEE_STATUS,
             });
             return acc;
           }, {});
@@ -206,6 +207,7 @@ export default function GroupEventLeaderboardPage() {
       'District',
       'Student IDs',
       'Student Names',
+      'Attendance',
 
       // Criteria scores per judge
       ...criteriaList.flatMap((criteria) =>
@@ -228,6 +230,11 @@ export default function GroupEventLeaderboardPage() {
       // Combine student IDs and names
       const studentIds = group.members.map((m) => m.id).join('; ');
       const studentNames = group.members.map((m) => m.name).join('; ');
+      const attendance = group.members
+        .map((m) =>
+          m.ATTENDEE_STATUS === 'Attended' ? 'Present' : 'Yet to Check In',
+        )
+        .join('; ');
 
       // Build scores in exact order - criteria first, then judges within each criteria
       const scores = [];
@@ -257,6 +264,8 @@ export default function GroupEventLeaderboardPage() {
         group.district ?? 'Unknown',
         studentIds,
         studentNames,
+        attendance,
+
         ...scores,
         ...judgeTotals,
         parseFloat(group.overallTotal ?? 0).toFixed(2),
@@ -404,15 +413,31 @@ export default function GroupEventLeaderboardPage() {
                     </td>
                     <td className="px-4 py-2 border">
                       {group.members.map((member, i) => (
-                        <p
+                        <div
                           key={i}
-                          className="text-xs mt-2"
+                          className="mt-2"
                         >
-                          <span className="font-bold bg-gray-100 p-1 rounded-2xl pr-2">
-                            {member.id}
+                          {/* First line: ID + Name */}
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="font-bold bg-gray-100 px-2 py-0.5 rounded-2xl">
+                              {member.id}
+                            </span>
+                            <span>{member.name}</span>
+                          </div>
+
+                          {/* Second line: Attendance */}
+                          <span
+                            className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                              member.ATTENDEE_STATUS === 'Attended'
+                                ? 'bg-green-100 text-green-700 border border-green-300'
+                                : 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                            }`}
+                          >
+                            {member.ATTENDEE_STATUS === 'Attended'
+                              ? 'Present'
+                              : 'Yet to Check In'}
                           </span>
-                          {member.name}
-                        </p>
+                        </div>
                       ))}
                     </td>
                     {eventMetadata.evalCriteria &&
